@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>无期迷途 · 狂厄烙印</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 30% 10%, #2a0e0e 0%, #050202 100%);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      font-family: 'Segoe UI', 'Roboto', system-ui, sans-serif; padding: 20px;
+      color: #e3d9d9; position: relative;
+    }
+    body::before {
+      content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc0IiBudW1PY3RhdmVzPSIzIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNmKSIgb3BhY2l0eT0iMC4wNSIgLz48L3N2Zz4=');
+      pointer-events: none; z-index: 1;
+    }
+    .test-container {
+      max-width: 800px; width: 100%; background: rgba(15, 4, 4, 0.92);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid #c04040; border-radius: 36px; padding: 28px 28px 36px;
+      box-shadow: 0 30px 50px rgba(0,0,0,0.95), 0 0 30px #8b1a1a77, inset 0 0 0 1px #4a2020;
+      position: relative; z-index: 10;
+    }
+    h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: 8px; text-align: center; color: #e0b0b0; text-shadow: 0 0 20px #b03030, 0 4px 8px #000; margin-bottom: 8px; font-family: 'Cinzel', serif; }
+    .subhead { text-align: center; color: #c89090; border-bottom: 1px dashed #a05050; padding-bottom: 18px; margin-bottom: 20px; letter-spacing: 4px; text-transform: uppercase; }
+    #splashScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 520px; }
+    .archive-badge { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .badge-line { width: 50px; height: 2px; background: #b05050; }
+    .splash-title { font-family: 'Cinzel', serif; font-size: 3.2rem; font-weight: 900; color: #d4a0a0; text-shadow: 6px 6px 0 #1a0404, 0 0 30px #b02020; letter-spacing: 10px; margin-bottom: 8px; border-bottom: 2px solid #a04040; padding-bottom: 16px; }
+    .splash-sub { font-size: 1.1rem; color: #c0a0a0; margin: 12px 0 18px; font-style: italic; }
+    .archive-stamp { background: #1f0808e0; border: 2px solid #b04040; padding: 20px 40px; border-radius: 16px; margin: 20px 0; box-shadow: inset 0 0 20px #2a0404, 0 0 20px #000; }
+    .stamp-text { font-size: 2rem; font-weight: bold; color: #e0a0a0; text-transform: uppercase; letter-spacing: 12px; }
+    .stamp-sub { color: #b07070; letter-spacing: 6px; margin-top: 8px; }
+    .btn-start { background: #1f0606; border: 3px solid #c05050; color: #f0c0c0; padding: 18px 56px; font-size: 1.8rem; font-weight: 900; border-radius: 60px; cursor: pointer; box-shadow: 0 10px 0 #140101, 0 0 35px #b02020; transition: 0.12s; letter-spacing: 8px; margin-top: 24px; text-transform: uppercase; font-family: 'Cinzel', serif; }
+    .btn-start:hover { background: #3a1010; transform: translateY(-4px); box-shadow: 0 14px 0 #140101, 0 0 45px #c04040; }
+    .btn-start:active { transform: translateY(6px); box-shadow: 0 4px 0 #140101, 0 0 25px #a03030; }
+    .splash-footer { margin-top: 40px; color: #a06060; letter-spacing: 2px; border-top: 1px solid #602a2a; padding-top: 20px; width: 80%; text-align: center; }
+    .progress-area { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+    .progress-track { flex: 1; height: 8px; background: #1f0e0e; border-radius: 20px; box-shadow: inset 0 1px 5px #000; }
+    .progress-fill { width: 0%; height: 8px; background: linear-gradient(90deg, #c04040, #e09090, #c04040); border-radius: 20px; box-shadow: 0 0 12px #c04040; transition: width 0.2s; }
+    .question-counter { font-weight: 600; color: #e0c0c0; min-width: 80px; }
+    .question-card { background: #140a0ae0; border-radius: 32px; padding: 28px 24px; margin-bottom: 24px; border: 1px solid #b04040a0; box-shadow: 0 10px 0 #0a0303; backdrop-filter: blur(8px); }
+    .question-text { font-size: 1.5rem; font-weight: 600; margin-bottom: 30px; color: #f0d0d0; }
+    .options { display: flex; flex-direction: column; gap: 12px; }
+    .option-btn { background: #1c0e0ee0; border: 2px solid #a85050; border-radius: 60px; padding: 16px 22px; font-size: 1rem; color: #efd0d0; text-align: left; cursor: pointer; transition: all 0.15s; box-shadow: 0 4px 0 #100404; line-height: 1.4; }
+    .option-btn:hover { background: #3a1818; border-color: #d07070; transform: translateY(-2px); box-shadow: 0 6px 0 #100404; }
+    .nav-buttons { display: flex; gap: 16px; margin-top: 10px; }
+    .btn { background: #1f0c0c; border: 1px solid #b05050; color: #f0d0d0; padding: 16px 24px; font-weight: bold; border-radius: 40px; cursor: pointer; box-shadow: 0 5px 0 #140606; flex: 1; text-align: center; font-size: 1.1rem; }
+    .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #140606; }
+    .btn:disabled { opacity: 0.3; pointer-events: none; }
+    .result-panel { background: #120909f2; border-radius: 36px; padding: 28px 22px; border: 2px solid #c05050; box-shadow: inset 0 0 15px #000, 0 15px 25px #000; }
+    .character-name { font-size: 3rem; text-align: center; color: #f0b0b0; text-shadow: 0 0 20px #c04040; }
+    .character-title { text-align: center; font-size: 1.2rem; color: #cfb0b0; margin-bottom: 18px; border-bottom: 1px solid #b05050; padding-bottom: 12px; }
+    .trait-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; }
+    .tag { background: #281818; padding: 6px 20px; border-radius: 30px; border: 1px solid #c06060; color: #f0c0c0; font-weight: 600; }
+    .analysis-block { background: #0f0707f0; border-radius: 28px; padding: 22px; margin: 22px 0; border-left: 8px solid #c04040; }
+    .analysis-title { font-size: 1.3rem; color: #e0a0a0; margin-bottom: 14px; font-weight: bold; }
+    .quote { font-style: italic; color: #d8b0b0; margin: 18px 0 8px; padding-left: 16px; border-left: 4px solid #b05050; }
+    .restart-btn { background: #1f0a0a; border: 2px solid #c07070; color: #f0d0d0; padding: 16px; width: 100%; font-size: 1.2rem; border-radius: 60px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 6px 0 #140606; }
+    .hidden { display: none !important; }
+    .footer-note { text-align: center; margin-top: 24px; color: #a07070; letter-spacing: 2px; }
+    @media (max-width: 480px) { .test-container { padding: 16px; } h1 { font-size: 1.8rem; } .splash-title { font-size: 2.2rem; } }
+  </style>
+</head>
+<body>
+<div class="test-container">
+  <h1>MBCC·机密</h1>
+  <div class="subhead">—— 收容凶恶之人 · 支配禁忌之力 ——</div>
+
+  <div id="splashScreen">
+    <div class="archive-badge"><span class="badge-line"></span><span class="badge-text"></span><span class="badge-line"></span></div>
+    <div class="splash-title">无期迷途</div>
+    <div class="splash-sub">狂厄烙印 · 人格测试</div>
+    <div class="archive-stamp"><div class="stamp-text">VOL.1</div><div class="stamp-sub">MBCC 档案室</div></div>
+    <div style="font-size: 1rem; color: #c08080; margin: 10px 0; letter-spacing: 4px;">机密档案 · 禁闭者人格测试</div>
+    <button class="btn-start" id="startTestBtn">启封</button>
+    <div class="splash-footer">狂厄之下 · 真实永存</div>
+  </div>
+
+  <div id="quizSection" class="hidden">
+    <div class="progress-area"><div class="progress-track"><div id="progressFill" class="progress-fill" style="width:3.33%"></div></div><div class="question-counter" id="counterText">1 / 30</div></div>
+    <div class="question-card"><div class="question-text" id="questionDisplay"></div><div class="options" id="optionsContainer"></div></div>
+    <div class="nav-buttons"><button class="btn" id="prevBtn" disabled>← 上一题</button><button class="btn" id="nextBtn">下一题 →</button></div>
+  </div>
+
+  <div id="resultSection" class="result-panel hidden">
+    <div class="character-name" id="charName"></div><div class="character-title" id="charTitle"></div>
+    <div class="trait-tags" id="traitTags"></div>
+    <div class="analysis-block"><div class="analysis-title">📜 禁闭者语录</div><div class="quote" id="charQuote"></div></div>
+    <div class="analysis-block"><div class="analysis-title">🧬 人格底色 · 行动策略</div><div id="deepAnalysis"></div></div>
+    <div class="analysis-block"><div class="analysis-title">🔮 启示录</div><div id="revelation"></div></div>
+    <button class="restart-btn" id="restartBtn">⟳ 重新烙印</button>
+  </div>
+  <div class="footer-note">SHACKLE · RESONANCE</div>
+</div>
+
+<script>
+  (function(){
+    // 角色库（已更新艾恩、切尔西、000的设定）
+    const characters = [
+      // 狄斯阵营
+      { id:'serin', name:'瑟琳', title:'清理人', quote:'“在你被命运拖垮之前……我想多看你一眼。”', tags:['#掌控','#宿命','#完美'], region:'dis',
+        analysis:'人格底色：表面温和完美，内里冷静掌控，带有宿命论的疏离。行动策略：以弥补过失的方式介入，在终点前守护。',
+        revelation:'启示：你擅长洞察秩序下的暗流，但需警惕对“代价”的过度承担。' },
+      { id:'lanjiu', name:'蓝鹫', title:'边境蛇头', quote:'“梦想明码标价，铃声是现实击溃梦想的声音。”', tags:['#情报','#交易','#悲观'], region:'dis',
+        analysis:'人格底色：根植悲观，相信悲剧终将发生。行动策略：在可控范围提供庇护，一切皆视为交易。',
+        revelation:'启示：务实让你生存，但请允许“例外”发生。' },
+      { id:'000', name:'000', title:'代码幽灵', quote:'“就算命运给你牵了别的红线，我也会全部抢过来。”', tags:['#高维','#恶趣味','#冰淇淋'], region:'dis',
+        analysis:'人格底色：来自高维的数据产物，知道所有人的结局。行动策略：因局长而产生兴趣，用跳脱的方式参与这个世界。',
+        revelation:'启示：你看透结局却仍选择参与，这份好奇心本身就是意义。' },
+      { id:'angel', name:'安吉尔', title:'暗网杀手', quote:'“深渊有我就够了，谁也别想把你拖进来。”', tags:['#专业','#疏离','#守护'], region:'dis',
+        analysis:'人格底色：接受黑暗边缘，孤单即安全。行动策略：接单只看性价比，唯独守护局长。',
+        revelation:'启示：疏离是保护色，试着让值得的人走进你的安全屋。' },
+      { id:'zoya', name:'卓娅', title:'军团首领', quote:'“你是我见过最强大的人，以后很多事就交给你了。”', tags:['#领袖','#武力','#意志'], region:'dis',
+        analysis:'人格底色：信奉暴力终结暴力，靠拳头和意志。行动策略：以绝对力量建立秩序，视部下为战友。',
+        revelation:'启示：真正的强大包括信任与托付。' },
+      { id:'langley', name:'兰利', title:'第九机关', quote:'“不要向我索取真实，有些真相只能用性命交换。”', tags:['#谋略','#忠诚','#守护'], region:'dis',
+        analysis:'人格底色：深入黑暗守护城市，背负恶名。行动策略：要求部下忠诚，自己承担所有污名。',
+        revelation:'启示：你相信目的正当化手段，但也需有人理解你的孤寂。' },
+      { id:'aien', name:'艾恩', title:'铁面医生', quote:'“在彼岸诊所，我只做我认为正确的事。”', tags:['#医术','#决绝','#彼岸'], region:'dis',
+        analysis:'人格底色：为救病人不惜采用极端手段，被主流诟病却从不后悔。行动策略：在彼岸诊所救治狂厄感染者，遇到安后找到人生意义。',
+        revelation:'启示：你的决绝是为了拯救，即使不被理解也坚持自己的医道。' },
+      { id:'chelsea', name:'切尔西伯爵', title:'宝石女王', quote:'“局长，考虑一下被我包养怎么样？”', tags:['#富有','#优雅','#包养'], region:'dis',
+        analysis:'人格底色：坐拥宝石产业的富家小姐，优雅而自信。行动策略：用财富和魅力让世界按自己的节奏运转，多次邀请局长。',
+        revelation:'启示：你的自信与慷慨是天性，真正的价值不在宝石而在人心。' },
+      { id:'oak', name:'橡木匣', title:'亡者代言人', quote:'“你是比亡灵更有意思的存在。”', tags:['#死亡','#信息','#告别'], region:'dis',
+        analysis:'人格底色：被抛弃后对世界失望，从死役中获取信息。行动策略：主持告别仪式，渴望辛迪加重生。',
+        revelation:'启示：你承载了太多死亡的重量，偶尔也让生者给你慰藉。' },
+      { id:'hamel', name:'哈梅尔', title:'幻境舞者', quote:'“你将我从幻境中唤醒……可是，失去舞台的舞者，该去往哪里呢？”', tags:['#艺术','#牺牲','#幻觉'], region:'dis',
+        analysis:'人格底色：为镇压黑环牺牲自由，在幻境中独舞二十三年。行动策略：用舞蹈代替语言，用幻觉掩盖真实。',
+        revelation:'启示：你习惯用美与幻象保护他人，但真实的情感更值得触碰。' },
+      { id:'cabernet', name:'卡门奈特', title:'美食品鉴师', quote:'“你的灵魂……在它成熟前，我愿意忍受饥饿。”', tags:['#欲望','#培养','#优雅'], region:'dis',
+        analysis:'人格底色：优雅的掠夺者，将进食升华为病态艺术。行动策略：纵容猎物使其灵魂更美味。',
+        revelation:'启示：欲望需要克制，真正的满足或许不在于占有。' },
+      { id:'adela', name:'阿黛拉', title:'雾巷理发师', quote:'“呆在局长身边，就是我所期望的日常。”', tags:['#记忆','#日常','#剪刀'], region:'dis',
+        analysis:'人格底色：为他人剪除烦恼记忆，自己却无法摆脱幻觉。行动策略：不断搬家寻找日常，最终在局长身边找回心跳。',
+        revelation:'启示：逃避不能真正解决问题，直面羁绊才能获得安宁。' },
+      { id:'dreya', name:'德雷雅', title:'未知渴求者', quote:'“量子场会吸引扭曲时空，而你……全都吸引着我。”', tags:['#求知','#侵蚀','#沉默'], region:'dis',
+        analysis:'人格底色：为真理深入禁地被狂厄完全侵蚀。行动策略：沉默观测，只对局长有反应。',
+        revelation:'启示：对未知的渴望让你坠入深渊，但“秘密的黑洞”也能成为锚点。' },
+      { id:'raven', name:'渡鸦', title:'自诩诗人', quote:'“我用羽毛笔记录着辛迪加的一切。”', tags:['#疯癫','#教育','#诗歌'], region:'dis',
+        analysis:'人格底色：用夸大事实搅浑辛迪加，逼毒瘤现身。行动策略：写蹩脚诗、办学堂，为流浪儿投入心血。',
+        revelation:'启示：你的疯狂是反抗的面具，真正的温柔留给未来。' },
+      { id:'deren', name:'黛伦', title:'最佳导演', quote:'“你愿意成为我电影中的主角吗？”', tags:['#记录','#不认命','#观察'], region:'dis',
+        analysis:'人格底色：表面慵懒无所谓，实则看透愚昧。行动策略：暗中记录一切，等待拍摄“不认命”的故事。',
+        revelation:'启示：现实曾让你失望，但记录本身已是反抗。' },
+      { id:'nox', name:'诺克斯', title:'内海死神', quote:'“你让我察觉到许多不熟悉的情绪……我想留在你身边。”', tags:['#死神','#残骸','#渴望'], region:'dis',
+        analysis:'人格底色：几乎没有生命迹象，凭借转化生命力延续。行动策略：把玩现代物品了解世界，渴望阳光。',
+        revelation:'启示：即使身为“残骸”，也拥有对温暖的好奇与向往。' },
+      { id:'eirene', name:'伊琳娜', title:'奎恩总裁', quote:'“你……属于我，我的棋子，我的珍藏。”', tags:['#棋局','#掌控','#交易'], region:'dis',
+        analysis:'人格底色：将一切视为棋局，享受穷尽智慧的快感。行动策略：用金钱与地位作为筹码，让交易持续。',
+        revelation:'启示：你擅长布局，但别忘了有些东西无法用棋子衡量。' },
+      { id:'crache', name:'科希', title:'流浪儿领袖', quote:'“你为什么没有早点来……”', tags:['#阴影','#庇护','#拒绝'], region:'dis',
+        analysis:'人格底色：庇护辛迪加边缘孩童，拒绝大人世界。行动策略：藏匿于阴影，只帮助同龄人。',
+        revelation:'启示：你的不信任来自创伤，但有人值得你破例。' },
+      { id:'enfer', name:'恩菲尔', title:'恐惧雕刻家', quote:'“我希望看到由内而外迸发的生命，开出名为爱的花。”', tags:['#恐惧','#艺术','#依赖'], region:'dis',
+        analysis:'人格底色：用恐惧让人显露真实，同时追求恐惧与爱。行动策略：孤傲独行，对局长有特别依赖。',
+        revelation:'启示：恐惧与爱是双生子，你可以同时拥有。' },
+      { id:'serpent', name:'娜恰', title:'蛇之女', quote:'“可以给我一个拥抱吗？你的温度让我想起了春天。”', tags:['#冷血','#渴望','#伪装'], region:'dis',
+        analysis:'人格底色：被蛇毒与狂厄重塑，介于人类与蛇之间。行动策略：用猎奇表演伪装，渴望欢笑与温暖。',
+        revelation:'启示：你渴望温暖却害怕靠近，试着接受真诚的拥抱。' },
+      { id:'summer', name:'夏音', title:'智力天才', quote:'“有兴趣做机甲驾驶员吗？”', tags:['#天才','#孤独','#机械'], region:'dis',
+        analysis:'人格底色：智力碾压常人，行为停留在高中女生。行动策略：依赖机械，用动画填补人际空白。',
+        revelation:'启示：你的天才让你孤独，但有人愿意陪你一起看动画。' },
+      { id:'rohu', name:'罗睺', title:'前FAC精锐', quote:'“过去我的眼前只有黑暗……可你做的一切就像给这片黑暗打上了一束光。”', tags:['#忠诚','#守护','#监视'], region:'dis',
+        analysis:'人格底色：忠诚至上，以伤换力。行动策略：既保护局长，也监视局长以防越界。',
+        revelation:'启示：你的忠诚是双刃剑，有人让你愿意放下防备。' },
+      { id:'coquelic', name:'可可莉克', title:'花园业师', quote:'“我希望能沉睡在你这道永不安息的湛蓝色的深渊里。”', tags:['#娇贵','#锋利','#花'], region:'dis',
+        analysis:'人格底色：表面柔弱需要照料，实则是刺客组织掌控者。行动策略：以花喻人，珍惜花园里的每一朵花。',
+        revelation:'启示：你以“我乐意”为准则，但有人让你愿意为之沉睡。' },
+      { id:'donald', name:'唐', title:'前锈火领袖', quote:'“会叫我挚友的人已经不在了……”', tags:['#乐天','#重建','#挚友'], region:'dis',
+        analysis:'人格底色：被背叛的英雄，经历崩溃后依然乐天。行动策略：诱导所有人协助西区重建。',
+        revelation:'启示：你的乐观是武器，铁锈上的火焰为的是照亮前路。' },
+      { id:'pearl', name:'珀尔夫人', title:'剧院老板娘', quote:'“与你在一起的每一刻，似乎都无法预料下一步会通往哪里。”', tags:['#享乐','#操盘','#疯狂'], region:'dis',
+        analysis:'人格底色：纵情享受的享乐主义者，把爱分给所有人。行动策略：掌控舞台，邀请局长共舞。',
+        revelation:'启示：你享受疯狂与失控，但有人让你想独占舞台。' },
+      { id:'vanilla', name:'瓦尼菈', title:'守望哨兵', quote:'“你的到来告诉我，永恒的第一秒，已经过去。”', tags:['#守望','#执念','#锚点'], region:'dis',
+        analysis:'人格底色：独自守护前哨站十年，被时间消磨殆尽。行动策略：依附于机甲的执念，观测局长。',
+        revelation:'启示：你是永恒中的锚点，有人让你重新开始计时。' },
+      { id:'bianca', name:'毕安卡', title:'正义记者', quote:'“采访一下局长，请问你对未来的感情生活有什么规划吗？”', tags:['#正义','#亢奋','#追问'], region:'dis',
+        analysis:'人格底色：偏执追求是非正确，用摄像机曝光黑暗。行动策略：亢奋地调查、追问、打探。',
+        revelation:'启示：你的执着是光，但别忘了照顾自己的感情生活。' },
+      { id:'hestia', name:'赫斯提亚', title:'盲眼圣女', quote:'“都怪你……我连怎么独自生存下去都忘记了。”', tags:['#盲眼','#火炬','#依赖'], region:'dis',
+        analysis:'人格底色：被一次次丢下的幸存者，用火炬驱散黑暗。行动策略：唯独在局长接近时平稳正向。',
+        revelation:'启示：你害怕再次被丢下，有人会穿越黑暗回到你身边。' },
+      { id:'pylgia', name:'派尔琪雅', title:'深海女儿', quote:'“如果有一天你走到生命的终点……那来见我吧，融于我身。”', tags:['#深海','#异类','#循环'], region:'dis',
+        analysis:'人格底色：比陆地更属于海洋，无法融入人类。行动策略：只对局长产生反应，希望共存。',
+        revelation:'启示：你视死亡为循环的一部分，但有人让你想多停留片刻。' },
+      // 东洲阵营
+      { id:'duro', name:'杜若', title:'神话学者', quote:'“你给了我真实、信任与归宿，我算是占尽你便宜了。”', tags:['#学者','#浪漫','#联结'], region:'dong',
+        analysis:'人格底色：质疑神话，又续写人的神话。行动策略：斡旋记录，用故事联结异乡。',
+        revelation:'启示：你既是质疑者也是续写者，真实与浪漫可以共存。' },
+      { id:'jichuan', name:'霁川', title:'朔雪山庄', quote:'“余生虽短，但能与你相逢，也算苍天公平一回。”', tags:['#侠道','#托付','#病骨'], region:'dong',
+        analysis:'人格底色：病骨侠心，以残躯行侠义。行动策略：以自身为局肃清奸恶，托付公义。',
+        revelation:'启示：残焰亦能照亮，信念可托付后继者。' },
+      { id:'yao', name:'曜', title:'金乌', quote:'“下次十日再临之时，还请由你持弓。”', tags:['#灾厄','#重生','#太阳'], region:'dong',
+        analysis:'人格底色：灾厄与神性结合，重生成长。行动策略：依赖局长，定期探望。',
+        revelation:'启示：归处即心安，即使曾为灾厄，也可被引导。' },
+      { id:'yingying', name:'萦萦', title:'紫藤花仙', quote:'“紫藤花听到你的愿望了……你愿意听听我的愿望吗？”', tags:['#愿望','#守护','#幻境'], region:'dong',
+        analysis:'人格底色：背负万人求生愿望，燃烧自己维持幻境。行动策略：用幻境安抚怨魂，守护误入者。',
+        revelation:'启示：你为他人愿望而活，别忘了自己也有被实现的愿望。' },
+      { id:'yugu', name:'玉骨', title:'说书人', quote:'“在下日夜都在盼望，盼望着您倾情上演何种结局。”', tags:['#悲剧','#故事','#观众'], region:'dong',
+        analysis:'人格底色：痴迷悲剧，收集陨落城邦的故事。行动策略：记录并等待终局，留在局长身边。',
+        revelation:'启示：你是悲剧的观众，但你可以选择参与书写结局。' },
+      { id:'xiaofeng', name:'啸风', title:'白虎山君', quote:'“身板儿这么弱，却能干那么多捅破天的大事儿。”', tags:['#野兽','#山君','#食欲'], region:'dong',
+        analysis:'人格底色：被老虎养大，被人类奉为山君。行动策略：信奉弱肉强食，却实际履行守护职责。',
+        revelation:'启示：你自称厌恶人类，却已接受供奉、守护一方。' },
+      { id:'lichen', name:'离尘', title:'玄修士', quote:'“撕去符条，铜铃作响……请再次将我们系为一体吧。”', tags:['#道术','#追寻','#符文'], region:'dong',
+        analysis:'人格底色：道术与科学结合，耗尽家财追寻师父。行动策略：以火焰消解失真，以红线为约。',
+        revelation:'启示：你的追寻是执念，有人愿意与你系为一体。' },
+      { id:'jelena', name:'耶莱娜', title:'贴身管家', quote:'“我带着仇恨踏上这片土地，却从未想过还会遇见想要珍惜的人。”', tags:['#潜伏','#照料','#爱恨'], region:'dong',
+        analysis:'人格底色：表面温柔管家，背后潜伏情报人员。行动策略：用母亲般的温暖照顾身边的人。',
+        revelation:'启示：你带着仇恨而来，却遇见了想要珍惜的人。爱恨可以共存。' }
+    ];
+
+    // 题库：30题，平衡所有角色
+    const questions = [
+      { text: "面对一个混乱无序的环境，你更倾向于怎样应对？", opts:[
+        { text:"制定规则，用强硬手段逐步恢复秩序", scores:{zoya:3,langley:2,eirene:2,serin:1,jichuan:1,coquelic:-1,yao:-1,xiaofeng:-1,'000':-1,raven:-1} },
+        { text:"潜伏在暗处，先收集足够的情报再做打算", scores:{lanjiu:3,angel:2,serin:2,langley:2,oak:1,zoya:-1,yao:-1,xiaofeng:-1,chelsea:0,aien:0} },
+        { text:"直接用力量迅速平定乱象，不拖泥带水", scores:{zoya:3,rohu:2,angel:1,nox:1,xiaofeng:2,serin:-1,langley:-1,eirene:-1,aien:-1,duro:-1} },
+        { text:"在各方之间周旋协调，让局面达成平衡", scores:{duro:3,pearl:2,serin:2,langley:1,eirene:1,chelsea:2,zoya:-1,angel:-1,aien:0,'000':1} } ] },
+      { text: "当亲近的人情绪崩溃时，你通常会怎么做？", opts:[
+        { text:"冷静地帮对方分析问题，给出解决方案", scores:{serin:3,langley:2,eirene:2,duro:1,aien:3,yingying:-1,hestia:-1,'000':1,chelsea:0} },
+        { text:"先陪着对方，让情绪有一个发泄的出口", scores:{yingying:3,hestia:2,jichuan:2,jelena:3,adela:2,serin:0,langley:-1,aien:0,'000':1} },
+        { text:"直接帮对方把麻烦事都处理掉", scores:{zoya:3,rohu:2,jichuan:2,coquelic:1,jelena:2,chelsea:3,serin:0,angel:0,langley:-1,aien:1} },
+        { text:"给对方一些空间，相信能够自己调整过来", scores:{angel:3,lanjiu:2,oak:2,adela:1,donald:1,aien:-1,yingying:-1,hestia:-1,jelena:-1,'000':0} } ] },
+      { text: "你更欣赏哪种力量的表现形式？", opts:[
+        { text:"绝对的压制力，让人无法反抗", scores:{zoya:3,nox:2,rohu:2,xiaofeng:3,yao:1,serin:-1,langley:-1,duro:-1,aien:-1,chelsea:-1} },
+        { text:"隐蔽的渗透与操控，在无形中掌控局面", scores:{lanjiu:3,serin:2,langley:2,eirene:2,pearl:1,zoya:-1,yao:-1,xiaofeng:-1,aien:0,'000':2} },
+        { text:"优雅而精准，以最小的代价达成目的", scores:{serin:3,coquelic:3,eirene:2,duro:2,hamel:1,chelsea:3,zoya:0,angel:-1,xiaofeng:-1,aien:1} },
+        { text:"狂放不羁，完全听从自己的本能", scores:{yao:3,xiaofeng:3,angel:2,nox:1,raven:2,serin:-2,langley:-2,eirene:-1,aien:-1,'000':1} } ] },
+      { text: "你更喜欢什么样的美学风格？", opts:[
+        { text:"东方式的留白与意境，含蓄深远", scores:{duro:3,yingying:3,jichuan:3,yugu:3,lichen:2,yao:2,jelena:2,zoya:-1,lanjiu:-1,chelsea:0} },
+        { text:"狄斯城的工业感与秩序，冷峻精密", scores:{serin:3,langley:3,lanjiu:2,eirene:2,zoya:1,aien:2,duro:-1,jichuan:-1,chelsea:1,'000':2} },
+        { text:"繁复华丽的装饰，充满戏剧张力", scores:{pearl:3,coquelic:3,cabernet:3,hamel:2,chelsea:3,yingying:1,serin:0,aien:-1,'000':0} },
+        { text:"极简与功能至上，去除一切冗余", scores:{vanilla:3,summer:2,angel:2,lanjiu:1,aien:3,pearl:-1,coquelic:-1,cabernet:-1,chelsea:-1,'000':2} } ] },
+      { text: "你如何看待金钱和物质？", opts:[
+        { text:"金钱是工具，用来实现更重要的目标", scores:{langley:3,serin:2,lanjiu:2,eirene:3,aien:2,chelsea:1,zoya:1,duro:1,pearl:-1} },
+        { text:"有钱才能有自由和选择权", scores:{chelsea:3,lanjiu:3,eirene:2,pearl:2,zoya:0,serin:0,langley:0,aien:-1,yingying:-1} },
+        { text:"够用就好，不太在意这些", scores:{angel:3,oak:3,nox:3,adela:2,hestia:2,chelsea:-2,zoya:0,aien:1,duro:1} },
+        { text:"赚钱就是为了享受生活", scores:{pearl:3,coquelic:3,chelsea:3,cabernet:2,raven:1,serin:-1,langley:-1,aien:-1,vanilla:-1} } ] },
+      { text: "在一个团队中，你通常扮演什么角色？", opts:[
+        { text:"做决定的那个人，喜欢主导方向", scores:{zoya:3,eirene:3,langley:2,serin:1,rohu:1,coquelic:1,chelsea:2,angel:-1,adela:-1,aien:0} },
+        { text:"协调大家的想法，让团队更和谐", scores:{duro:3,jelena:3,donald:2,adela:2,yingying:1,chelsea:1,zoya:0,serin:0,angel:-1,aien:1} },
+        { text:"独立行动，在关键时刻才会出手", scores:{angel:3,oak:3,nox:2,lanjiu:2,mantis:1,aien:2,zoya:-1,langley:-1,donald:-1,chelsea:-1} },
+        { text:"在幕后出谋划策，不喜欢抛头露面", scores:{serin:3,langley:2,lanjiu:2,vanilla:1,aien:1,'000':3,zoya:-1,rohu:-1,xiaofeng:-1,chelsea:0} } ] },
+      { text: "对于“规则”这两个字，你的看法更接近？", opts:[
+        { text:"规则是秩序的基石，需要被遵守", scores:{langley:3,serin:2,vanilla:2,eirene:2,jichuan:1,aien:2,lanjiu:-1,angel:-1,yao:-1,'000':-1} },
+        { text:"规则就是用来打破或重新塑造的", scores:{zoya:3,yao:2,xiaofeng:2,raven:3,angel:1,'000':2,serin:-2,langley:-2,vanilla:-2,aien:-2} },
+        { text:"利用规则为自己争取最大利益", scores:{lanjiu:3,eirene:3,serin:2,pearl:2,chelsea:3,zoya:0,langley:0,jichuan:-1,aien:-1,'000':1} },
+        { text:"规则应该由我来制定", scores:{zoya:3,coquelic:3,eirene:2,serin:2,langley:1,chelsea:2,duro:-1,yingying:-1,jelena:-1,aien:-1} } ] },
+      { text: "你最害怕的情况是？", opts:[
+        { text:"事情脱离掌控，无法预料下一步", scores:{serin:3,langley:3,lanjiu:2,eirene:2,aien:1,yao:-1,xiaofeng:-1,raven:-1,chelsea:0,'000':-1} },
+        { text:"被自己信任的人从背后捅刀子", scores:{angel:3,jichuan:2,yingying:2,rohu:2,jelena:3,serin:0,langley:0,zoya:0,aien:1,chelsea:1} },
+        { text:"自己的存在被世界彻底遗忘", scores:{yingying:3,hestia:3,eve:2,yugu:2,'000':1,zoya:0,serin:0,langley:0,chelsea:0,aien:0} },
+        { text:"没有能力保护对自己重要的人", scores:{zoya:3,rohu:3,jichuan:3,coquelic:2,hestia:2,aien:3,serin:0,lanjiu:-1,eirene:-1,chelsea:1} } ] },
+      { text: "面对曾经伤害过你的人，你会？", opts:[
+        { text:"正面回击，用力量彻底清算", scores:{zoya:3,rohu:2,xiaofeng:3,yao:1,raven:2,serin:-1,langley:-1,duro:-1,aien:-1,chelsea:0} },
+        { text:"耐心布局，等待最合适的时机复仇", scores:{lanjiu:3,serin:2,langley:2,eirene:2,angel:1,aien:1,zoya:0,duro:-1,chelsea:1,'000':2} },
+        { text:"尝试去理解对方的动机，或许会选择放下", scores:{duro:3,yingying:3,jichuan:2,jelena:3,hamel:1,zoya:-1,lanjiu:-1,angel:-1,aien:2,chelsea:-1} },
+        { text:"交给规则或命运去裁决，不再纠结", scores:{serin:2,jichuan:2,yugu:2,vanilla:1,lichen:1,aien:2,zoya:0,angel:0,raven:-1,chelsea:0} } ] },
+      { text: "哪句话更贴近你的人生态度？", opts:[
+        { text:"强者制定规则，弱者才需要遵守", scores:{zoya:3,eirene:2,coquelic:2,xiaofeng:3,serin:0,duro:-1,yingying:-1,jichuan:-1,aien:-2,chelsea:1} },
+        { text:"即使身处低谷，也要抬头看星星", scores:{yingying:3,jichuan:3,donald:3,hestia:2,hamel:2,aien:1,zoya:-1,lanjiu:-1,eirene:-1,chelsea:0} },
+        { text:"知识是唯一可靠的武器", scores:{summer:3,serin:2,langley:2,duro:2,aien:3,yao:-1,xiaofeng:-1,raven:-1,chelsea:0,'000':2} },
+        { text:"自由比什么都重要", scores:{yao:3,angel:3,xiaofeng:3,raven:2,nox:1,'000':2,serin:-1,langley:-1,rohu:-1,aien:-1} } ] },
+      { text: "你的行事风格更偏向？", opts:[
+        { text:"想到就做，不喜欢拖延", scores:{zoya:3,yao:2,xiaofeng:3,rohu:2,raven:2,serin:-1,langley:-1,aien:0,chelsea:1,'000':1} },
+        { text:"根据情况灵活调整，不固执", scores:{lanjiu:3,angel:2,pearl:2,donald:2,serin:1,chelsea:2,langley:0,zoya:0,vanilla:-1,aien:1} },
+        { text:"反复思考，确认万无一失再行动", scores:{serin:3,langley:3,eirene:2,vanilla:2,aien:3,zoya:-1,yao:-1,xiaofeng:-1,chelsea:-1,'000':1} },
+        { text:"凭感觉走，跟着直觉做决定", scores:{yao:3,yingying:2,raven:2,hamel:2,nox:1,'000':2,serin:-1,langley:-1,aien:-1,chelsea:0} } ] },
+      { text: "如果获得了强大的力量，你会如何使用？", opts:[
+        { text:"用来建立新的秩序，保护想保护的人", scores:{zoya:3,rohu:3,jichuan:3,langley:2,coquelic:2,aien:3,lanjiu:-1,angel:0,pearl:-1,chelsea:1} },
+        { text:"随心所欲地生活，追求绝对的自由", scores:{yao:3,xiaofeng:3,angel:2,raven:3,nox:1,'000':2,serin:-1,langley:-1,rohu:-1,aien:-1} },
+        { text:"隐藏起来，继续过普通人的生活", scores:{angel:2,adela:2,lanjiu:1,eve:1,mantis:1,aien:0,zoya:-1,serin:0,langley:0,chelsea:-1} },
+        { text:"深入研究力量的本质，探寻真理", scores:{serin:2,dreya:3,duro:2,summer:3,aien:2,yao:0,zoya:0,xiaofeng:-1,chelsea:0,'000':3} } ] },
+      { text: "你更认同哪一种人与人的关系？", opts:[
+        { text:"基于共同利益和信念的牢固联盟", scores:{lanjiu:3,langley:3,serin:2,eirene:2,zoya:1,aien:2,yingying:-1,hestia:-1,jelena:0,chelsea:1} },
+        { text:"灵魂深处的共鸣，不需要太多言语", scores:{yingying:3,jichuan:3,hamel:3,hestia:2,mantis:2,aien:1,serin:0,lanjiu:-1,eirene:-1,chelsea:0} },
+        { text:"彼此独立，互相尊重对方的空间", scores:{angel:3,lanjiu:2,oak:2,adela:1,aien:2,zoya:0,rohu:-1,jelena:-1,chelsea:0,'000':2} },
+        { text:"明确的支配与服从，秩序井然", scores:{zoya:2,serin:2,eirene:3,coquelic:2,rohu:1,chelsea:2,duro:-1,yingying:-1,angel:-1,aien:-1} } ] },
+      { text: "你更容易被哪种类型的故事打动？", opts:[
+        { text:"东洲的志怪传说，人与妖的纠葛", scores:{duro:3,yingying:3,jichuan:3,yao:2,yugu:2,lichen:2,zoya:-1,lanjiu:-1,aien:0,chelsea:0} },
+        { text:"狄斯的黑帮史诗，权力与生存的较量", scores:{zoya:3,lanjiu:3,langley:2,angel:2,raven:2,duro:-1,jichuan:-1,yingying:-1,aien:1,chelsea:1} },
+        { text:"古典悲剧，英雄在命运前的挣扎", scores:{yugu:3,hamel:3,jichuan:2,serin:1,nox:1,aien:2,zoya:0,lanjiu:0,angel:0,chelsea:0} },
+        { text:"现代都市的悬疑与秘密", scores:{serin:2,langley:2,bianca:3,lanjiu:2,aien:1,duro:-1,yingying:-1,yao:-1,chelsea:1,'000':3} } ] },
+      { text: "遭遇背叛时，你的反应更接近？", opts:[
+        { text:"冷酷地清算，绝不原谅", scores:{zoya:3,rohu:2,eirene:2,coquelic:2,lanjiu:1,duro:-1,yingying:-1,jichuan:-1,aien:0,chelsea:0} },
+        { text:"虽然痛苦，但仍试图理解对方的动机", scores:{duro:3,yingying:3,jichuan:3,jelena:3,serin:0,aien:2,zoya:-1,lanjiu:-1,angel:0,chelsea:1} },
+        { text:"将计就计，反过来利用对方", scores:{lanjiu:3,serin:2,langley:3,eirene:3,pearl:2,zoya:0,duro:-1,jichuan:-1,aien:-1,chelsea:2} },
+        { text:"默默离开，从此不再信任任何人", scores:{angel:3,oak:3,adela:2,nox:2,hestia:2,aien:1,zoya:0,serin:0,donald:-1,chelsea:-1} } ] },
+      { text: "对于“牺牲”这件事，你的态度是？", opts:[
+        { text:"在必要的时候，可以牺牲自己", scores:{jichuan:3,rohu:3,zoya:2,hamel:3,coquelic:2,langley:1,aien:3,lanjiu:-1,pearl:-1,chelsea:-1} },
+        { text:"不希望任何人为此付出生命", scores:{yingying:3,duro:2,jelena:3,adela:2,hestia:2,aien:2,zoya:0,serin:0,langley:0,chelsea:1} },
+        { text:"精确计算，避免无谓的牺牲", scores:{serin:3,langley:3,lanjiu:2,eirene:2,aien:2,zoya:0,jichuan:-1,rohu:0,chelsea:1,'000':2} },
+        { text:"为了信念而死，是一种荣耀", scores:{zoya:3,yao:3,rohu:2,jichuan:2,nox:1,aien:1,duro:-1,yingying:-1,serin:-1,chelsea:0} } ] },
+      { text: "孤独对你来说意味着什么？", opts:[
+        { text:"习以为常，甚至有点享受", scores:{angel:3,oak:3,lanjiu:2,nox:2,aien:1,yingying:-1,hestia:-1,jelena:-1,chelsea:-1,'000':1} },
+        { text:"难以忍受，需要有人陪伴", scores:{yingying:3,hestia:3,eve:3,jelena:3,adela:2,angel:-1,oak:-1,lanjiu:-1,aien:0,chelsea:2} },
+        { text:"可以安静思考、不受打扰的时间", scores:{serin:2,vanilla:3,dreya:2,summer:2,aien:3,yingying:-1,hestia:-1,eve:-1,chelsea:0,'000':3} },
+        { text:"为了保护自己而必须付出的代价", scores:{angel:3,rohu:2,adela:2,oak:2,lanjiu:1,aien:0,duro:-1,jichuan:-1,donald:-1,chelsea:-1} } ] },
+      { text: "你如何看待“命运”这件事？", opts:[
+        { text:"命运由自己掌握，不信天命", scores:{zoya:3,eirene:2,rohu:2,coquelic:2,xiaofeng:3,serin:-1,yugu:-1,duro:0,aien:1,chelsea:2} },
+        { text:"很多事情冥冥中自有定数", scores:{serin:3,yingying:3,jichuan:2,yugu:3,oak:2,aien:0,zoya:-1,eirene:-1,xiaofeng:-1,chelsea:0} },
+        { text:"命运是可以被计算和预测的轨迹", scores:{serin:2,langley:2,vanilla:2,dreya:2,aien:1,yao:-1,raven:-1,hamel:0,chelsea:0,'000':3} },
+        { text:"命运是虚无的，没什么意义", scores:{nox:3,angel:2,oak:2,raven:2,'000':2,serin:-1,yingying:-1,jichuan:-1,duro:-1,aien:-1} } ] },
+      { text: "你的弱点更接近哪一种？", opts:[
+        { text:"控制欲太强，不放心交给别人", scores:{serin:3,langley:3,eirene:3,zoya:2,coquelic:2,duro:-1,yingying:-1,raven:-1,aien:0,chelsea:1} },
+        { text:"情感上依赖他人，害怕被抛弃", scores:{yingying:3,hestia:3,eve:3,hamel:2,jelena:3,serin:0,langley:-1,zoya:0,aien:1,chelsea:0} },
+        { text:"过于理性，显得冷漠疏远", scores:{angel:2,lanjiu:2,oak:2,dreya:2,aien:3,yingying:-1,hestia:-1,jelena:-1,chelsea:-1,'000':2} },
+        { text:"冲动，做事不太考虑后果", scores:{yao:3,xiaofeng:3,raven:2,zoya:1,rohu:0,serin:-1,langley:-1,aien:-2,chelsea:0,'000':1} } ] },
+      { text: "你对他人的期望是？", opts:[
+        { text:"忠诚可靠，能力要强", scores:{langley:3,rohu:3,zoya:2,eirene:2,serin:1,aien:2,raven:-1,yingying:-1,adela:-1,chelsea:1} },
+        { text:"真诚温暖，能互相支持", scores:{yingying:3,jichuan:3,jelena:3,donald:3,duro:2,aien:2,serin:0,langley:0,lanjiu:-1,chelsea:2} },
+        { text:"各司其职，有用就行", scores:{lanjiu:3,eirene:2,serin:1,angel:1,aien:1,zoya:0,yingying:-1,jichuan:-1,chelsea:0,'000':2} },
+        { text:"不要来干涉我的生活", scores:{angel:3,xiaofeng:3,oak:2,nox:2,raven:2,rohu:-1,jelena:-1,donald:-1,aien:-1,chelsea:-2} } ] },
+      { text: "面对未知的领域，你会？", opts:[
+        { text:"感到兴奋，想要一探究竟", scores:{dreya:3,summer:3,duro:2,yao:2,aien:1,serin:0,langley:0,vanilla:0,chelsea:1,'000':3} },
+        { text:"小心收集信息，一步一步来", scores:{lanjiu:3,serin:2,langley:3,vanilla:2,aien:3,dreya:0,yao:-1,xiaofeng:-1,chelsea:1,'000':1} },
+        { text:"有些害怕，尽量避开", scores:{eve:3,adela:2,hestia:2,mantis:1,aien:0,serin:0,zoya:-1,rohu:-1,donald:-1,chelsea:-1} },
+        { text:"想办法把它纳入自己的掌控", scores:{eirene:3,serin:2,langley:2,zoya:2,coquelic:2,dreya:-1,duro:-1,yingying:-1,aien:1,chelsea:2} } ] },
+      { text: "你理解的爱更接近？", opts:[
+        { text:"占有与守护，不容他人染指", scores:{serin:3,zoya:2,rohu:2,coquelic:2,duro:-1,yingying:-1,jichuan:-1,aien:0,chelsea:1,'000':3} },
+        { text:"理解与奉献，心甘情愿地付出", scores:{yingying:3,jichuan:3,hamel:3,jelena:3,hestia:2,aien:3,serin:0,langley:0,eirene:-1,chelsea:1} },
+        { text:"一种契约，双方各取所需", scores:{lanjiu:3,eirene:3,pearl:2,serin:1,angel:1,chelsea:3,yingying:-1,jichuan:-1,hamel:-1,aien:-1} },
+        { text:"一个弱点，不想轻易触碰", scores:{angel:3,oak:3,nox:2,rohu:1,adela:1,aien:0,serin:0,langley:0,duro:-1,chelsea:-1} } ] },
+      { text: "危机之中，你的第一反应是？", opts:[
+        { text:"立刻掌控全局，指挥大家行动", scores:{zoya:3,langley:3,serin:2,eirene:2,rohu:2,angel:-1,oak:-1,raven:-1,aien:2,chelsea:1} },
+        { text:"先保护身边重要的人", scores:{jichuan:3,rohu:3,coquelic:3,hestia:2,jelena:3,aien:3,zoya:0,serin:0,langley:0,chelsea:2} },
+        { text:"冷静分析，找出最优的解决方案", scores:{serin:3,langley:2,lanjiu:2,vanilla:2,aien:3,zoya:-1,rohu:0,xiaofeng:-1,chelsea:0,'000':3} },
+        { text:"直接冲上去，用力量解决问题", scores:{zoya:3,yao:3,xiaofeng:3,rohu:1,nox:1,serin:-1,langley:-1,aien:-1,chelsea:0,'000':0} } ] },
+      { text: "你更偏爱哪种生活环境？", opts:[
+        { text:"东洲的山水庭院，宁静致远", scores:{duro:3,jichuan:3,yingying:3,yugu:3,lichen:3,jelena:2,yao:2,zoya:-1,lanjiu:-1,aien:0,chelsea:0} },
+        { text:"狄斯的高楼霓虹，繁华高效", scores:{zoya:3,lanjiu:3,langley:3,serin:2,eirene:2,chelsea:3,duro:-1,jichuan:-1,aien:1,'000':2} },
+        { text:"远离人烟的荒野或废墟", scores:{angel:3,nox:3,oak:3,mantis:3,xiaofeng:2,serin:0,langley:-1,donald:-1,aien:1,chelsea:-2} },
+        { text:"充满艺术气息的街区", scores:{hamel:3,pearl:3,coquelic:3,enfer:3,adela:2,chelsea:2,serin:1,lanjiu:0,zoya:0,aien:0} } ] },
+      { text: "你对“过去”的态度是？", opts:[
+        { text:"过去塑造了现在的我，不会刻意回避", scores:{serin:2,langley:2,aien:3,jichuan:2,duro:2,angel:0,zoya:1,chelsea:1,'000':1} },
+        { text:"过去已经过去，重要的是向前看", scores:{zoya:3,donald:3,raven:2,yao:2,chelsea:2,serin:0,oak:-1,angel:1,aien:0,'000':2} },
+        { text:"被困在过去里，难以走出来", scores:{hamel:3,adela:3,eve:3,hestia:3,nox:2,aien:-1,zoya:-1,chelsea:-1,'000':-1} },
+        { text:"过去是可以被修改和利用的", scores:{lanjiu:3,serin:2,eirene:2,pearl:2,aien:-2,duro:-1,jichuan:-1,chelsea:1,'000':3} } ] },
+      { text: "你对“未来”的期待是？", opts:[
+        { text:"充满希望，相信会越来越好", scores:{donald:3,duro:2,jichuan:2,chelsea:3,serin:0,lanjiu:-1,angel:0,aien:1,'000':1} },
+        { text:"悲观预期，做好最坏的打算", scores:{lanjiu:3,serin:2,oak:2,vanilla:2,aien:1,zoya:0,chelsea:-1,donald:-1,'000':0} },
+        { text:"不去想未来，活在当下", scores:{angel:3,yao:2,xiaofeng:2,pearl:3,raven:2,serin:0,langley:0,aien:0,chelsea:1,'000':2} },
+        { text:"未来已经被写好，我只是在走向它", scores:{serin:3,yugu:3,nox:2,aien:-1,zoya:-1,duro:-1,chelsea:-1,'000':3} } ] },
+      { text: "如果让你选择一种颜色代表自己，会是？", opts:[
+        { text:"黑色，深沉而神秘", scores:{angel:3,oak:3,nox:3,serin:2,langley:2,aien:1,chelsea:0,duro:-1,yingying:-1,'000':1} },
+        { text:"红色，热烈而危险", scores:{zoya:3,coquelic:3,cabernet:3,yao:2,rohu:2,serin:0,aien:0,chelsea:1,'000':1} },
+        { text:"金色，华丽而耀眼", scores:{chelsea:3,pearl:3,eirene:3,hamel:2,serin:1,aien:-1,angel:-1,'000':0} },
+        { text:"紫色，神秘而优雅", scores:{serin:3,yingying:3,duro:2,yugu:2,lichen:2,aien:0,zoya:0,chelsea:2,'000':2} } ] },
+      { text: "你更欣赏哪种类型的领导者？", opts:[
+        { text:"身先士卒，冲锋在前", scores:{zoya:3,rohu:3,jichuan:2,xiaofeng:2,serin:-1,langley:0,eirene:-1,aien:1,chelsea:0} },
+        { text:"运筹帷幄，决胜千里", scores:{langley:3,eirene:3,serin:2,lanjiu:2,aien:1,zoya:0,angel:-1,chelsea:1,'000':2} },
+        { text:"以德服人，仁者无敌", scores:{duro:3,jichuan:3,yingying:2,jelena:3,aien:2,zoya:0,langley:-1,eirene:-1,chelsea:1} },
+        { text:"无为而治，让大家自由发挥", scores:{angel:2,donald:2,pearl:2,raven:2,aien:0,serin:-1,langley:-1,chelsea:1,'000':1} } ] },
+      { text: "你对于“名声”的看法是？", opts:[
+        { text:"名声很重要，是地位的象征", scores:{chelsea:3,eirene:3,pearl:2,coquelic:2,serin:1,aien:-1,angel:-1,oak:-1,'000':0} },
+        { text:"名声是负累，宁愿隐于幕后", scores:{langley:3,serin:2,lanjiu:2,angel:2,aien:2,zoya:0,chelsea:-1,'000':1} },
+        { text:"不在乎别人怎么看我", scores:{zoya:3,oak:3,nox:3,raven:3,xiaofeng:2,serin:0,aien:2,chelsea:0,'000':2} },
+        { text:"名声是工具，可以用来达成目的", scores:{lanjiu:3,eirene:3,serin:2,pearl:2,aien:1,duro:-1,yingying:-1,chelsea:2,'000':2} } ] },
+      { text: "你对于“美”的理解更接近？", opts:[
+        { text:"美是和谐与秩序", scores:{serin:3,langley:2,vanilla:2,duro:2,aien:2,yao:-1,xiaofeng:-1,chelsea:1,'000':1} },
+        { text:"美是打破常规的震撼", scores:{hamel:3,enfer:3,yugu:3,raven:2,serin:0,aien:-1,chelsea:0,'000':2} },
+        { text:"美是华丽与繁复", scores:{pearl:3,coquelic:3,cabernet:3,chelsea:3,yingying:1,aien:-1,'000':0} },
+        { text:"美是自然与本真", scores:{duro:3,jichuan:3,yingying:3,xiaofeng:2,nox:1,aien:1,chelsea:0,'000':0} } ] },
+      { text: "最后，你对自己的人生有什么样的期许？", opts:[
+        { text:"建功立业，留下属于自己的印记", scores:{zoya:3,langley:3,eirene:3,chelsea:2,rohu:2,serin:1,aien:1,'000':1} },
+        { text:"守护珍视的人，平凡而温暖地度过一生", scores:{jichuan:3,jelena:3,adela:3,hestia:2,aien:3,zoya:0,serin:0,chelsea:1,'000':0} },
+        { text:"看遍世间风景，体验一切可能", scores:{duro:3,yao:3,pearl:3,raven:2,xiaofeng:2,serin:0,langley:0,aien:0,chelsea:2,'000':2} },
+        { text:"找到那个让我不再孤独的人或事", scores:{angel:3,yingying:3,hamel:3,nox:3,hestia:3,serin:2,aien:2,chelsea:1,'000':2} } ] }
+    ];
+
+    let idx=0; const total=questions.length; let ans=new Array(total).fill(null);
+    const splash=document.getElementById('splashScreen'), quiz=document.getElementById('quizSection'), res=document.getElementById('resultSection');
+    const qDisp=document.getElementById('questionDisplay'), optDiv=document.getElementById('optionsContainer');
+    const prev=document.getElementById('prevBtn'), next=document.getElementById('nextBtn');
+    const counter=document.getElementById('counterText'), prog=document.getElementById('progressFill');
+    const start=document.getElementById('startTestBtn'), restart=document.getElementById('restartBtn');
+    const cName=document.getElementById('charName'), cTitle=document.getElementById('charTitle'), cTags=document.getElementById('traitTags');
+    const cQuote=document.getElementById('charQuote'), deep=document.getElementById('deepAnalysis'), rev=document.getElementById('revelation');
+
+    function renderQuestion(i){
+      const q=questions[i]; qDisp.textContent=q.text;
+      let html=''; q.opts.forEach((opt,oi)=>{ const sel=ans[i]===oi; html+=`<button class="option-btn" data-opt="${oi}" style="${sel?'background:#4a2020;border-color:#d07070;':''}">${opt.text}</button>`; });
+      optDiv.innerHTML=html;
+      optDiv.querySelectorAll('.option-btn').forEach(b=>b.addEventListener('click',e=>{
+        const oi=parseInt(b.dataset.opt); ans[i]=oi;
+        optDiv.querySelectorAll('.option-btn').forEach((bt,ix)=>{ bt.style.background=ix===oi?'#4a2020':'#1c0e0ee0'; bt.style.borderColor=ix===oi?'#d07070':'#a85050'; });
+        updateNav(i);
+      }));
+      updateNav(i);
+    }
+    function updateNav(i){ counter.textContent=`${i+1} / ${total}`; prog.style.width=`${(i+1)/total*100}%`; prev.disabled=i===0; next.textContent=i===total-1?'🔮 揭示烙印':'下一题 →'; }
+    
+    function calcScores(){
+      let scores={}; characters.forEach(c=>scores[c.id]=0);
+      ans.forEach((a,i)=>{ if(a!==null){ const sc=questions[i].opts[a].scores; Object.keys(sc).forEach(id=>{ scores[id]=(scores[id]||0)+sc[id]; }); } });
+      return scores;
+    }
+    
+    function showResult(){
+      const scores=calcScores(); let bestChar=characters[0], maxScore=-999;
+      characters.forEach(c=>{ if(scores[c.id]>maxScore){ maxScore=scores[c.id]; bestChar=c; } });
+      cName.textContent=bestChar.name; cTitle.textContent=bestChar.title; cQuote.textContent=bestChar.quote;
+      deep.textContent=bestChar.analysis; rev.textContent=bestChar.revelation;
+      cTags.innerHTML=''; bestChar.tags.forEach(t=>{ const s=document.createElement('span'); s.className='tag'; s.textContent=t; cTags.appendChild(s); });
+      quiz.classList.add('hidden'); res.classList.remove('hidden');
+    }
+    
+    start.addEventListener('click', ()=>{ splash.classList.add('hidden'); quiz.classList.remove('hidden'); renderQuestion(0); });
+    prev.addEventListener('click', ()=>{ if(idx>0){ idx--; renderQuestion(idx); } });
+    next.addEventListener('click', ()=>{
+      if(ans[idx]===null){ alert('请选择一个选项'); return; }
+      if(idx===total-1){ if(ans.includes(null)) alert('请完成所有题目'); else showResult(); }
+      else{ idx++; renderQuestion(idx); }
+    });
+    restart.addEventListener('click', ()=>{ ans=new Array(total).fill(null); idx=0; res.classList.add('hidden'); splash.classList.remove('hidden'); });
+  })();
+</script>
+</body>
+</html>
