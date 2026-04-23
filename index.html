@@ -87,349 +87,333 @@
   </div>
 
   <div id="resultSection" class="result-panel hidden">
-    <div class="character-name" id="charName"></div>
-    <div class="character-title" id="charTitle"></div>
+    <div class="character-name" id="charName"></div><div class="character-title" id="charTitle"></div>
     <div class="trait-tags" id="traitTags"></div>
-    <div class="analysis-block">
-      <div class="analysis-title">📜 禁闭者语录</div>
-      <div class="quote" id="charQuote"></div>
-    </div>
-    <div class="analysis-block">
-      <div class="analysis-title">🧬 人格底色 · 行动策略</div>
-      <div id="deepAnalysis"></div>
-    </div>
-    <div class="analysis-block">
-      <div class="analysis-title">🔮 人格注脚</div>
-      <div id="revelation"></div>
-    </div>
+    <div class="analysis-block"><div class="analysis-title">📜 禁闭者语录</div><div class="quote" id="charQuote"></div></div>
+    <div class="analysis-block"><div class="analysis-title">🧬 人格底色 · 行动策略</div><div id="deepAnalysis"></div></div>
+    <div class="analysis-block"><div class="analysis-title">🔮 人格注脚</div><div id="revelation"></div></div>
     <button class="restart-btn" id="restartBtn">⟳ 重新烙印</button>
   </div>
   <div class="footer-note">SHACKLE · RESONANCE</div>
 </div>
 
 <script>
-  (function(){
-    // 角色库（已修正艾恩描述）
-    const characters = [
-      // 狄斯阵营
-      { id:'serin', name:'瑟琳', title:'清理人', quote:'“在你被命运拖垮之前……我想多看你一眼。”', tags:['#掌控','#宿命','#完美'], region:'dis',
+(function(){
+    var characters = [
+      { id:'serin', name:'瑟琳', title:'清理人', quote:'在你被命运拖垮之前，我想多看你一眼。', tags:['#掌控','#宿命','#完美'], region:'dis',
         analysis:'人格底色：表面温和完美，内里冷静掌控，带有宿命论的疏离。行动策略：以弥补过失的方式介入，在终点前守护。',
         revelation:'你擅长洞察秩序下的暗流，习惯于在终点到来前做好一切准备。你对代价的计算精准，却也容易被这份清醒所困。偶尔，不妨相信不完美也能被接纳。' },
-      { id:'lanjiu', name:'蓝鹫', title:'边境蛇头', quote:'“梦想明码标价，铃声是现实击溃梦想的声音。”', tags:['#情报','#交易','#悲观'], region:'dis',
+      { id:'lanjiu', name:'蓝鹫', title:'边境蛇头', quote:'梦想明码标价，铃声是现实击溃梦想的声音。', tags:['#情报','#交易','#悲观'], region:'dis',
         analysis:'人格底色：根植悲观，相信悲剧终将发生。行动策略：在可控范围提供庇护，一切皆视为交易。',
-        revelation:'你的务实让你在乱世中生存下来，每一笔交易都算得清楚。但请记得，有些东西无法用价码衡量。偶尔允许自己相信一次“例外”，或许会有不同的风景。' },
-      { id:'000', name:'000', title:'代码幽灵', quote:'“就算命运给你牵了别的红线，我也会全部抢过来。”', tags:['#高维','#恶趣味','#跳脱'], region:'dis',
+        revelation:'你的务实让你在乱世中生存下来，每一笔交易都算得清楚。但请记得，有些东西无法用价码衡量。偶尔允许自己相信一次例外，或许会有不同的风景。' },
+      { id:'000', name:'000', title:'代码幽灵', quote:'就算命运给你牵了别的红线，我也会全部抢过来。', tags:['#高维','#恶趣味','#跳脱'], region:'dis',
         analysis:'人格底色：来自高维的数据产物，知道所有人的结局。行动策略：因局长而产生兴趣，用跳脱的方式参与这个世界。',
         revelation:'你看透了所有的剧本，却仍然选择走进这个故事。这份好奇心让你比任何人都鲜活。你的恶趣味是连接世界的桥梁，冰淇淋和玩笑里藏着真实的温度。' },
-      { id:'angel', name:'安吉尔', title:'暗网杀手', quote:'“深渊有我就够了，谁也别想把你拖进来。”', tags:['#专业','#疏离','#守护'], region:'dis',
+      { id:'angel', name:'安吉尔', title:'暗网杀手', quote:'深渊有我就够了，谁也别想把你拖进来。', tags:['#专业','#疏离','#守护'], region:'dis',
         analysis:'人格底色：接受黑暗边缘，孤单即安全。行动策略：接单只看性价比，唯独守护局长。',
         revelation:'你习惯了独来独往，把孤独当作护甲。但在你划定的安全区里，其实一直留着一盏灯。那个人值得你破例，也值得你信任。' },
-      { id:'zoya', name:'卓娅', title:'军团首领', quote:'“你是我见过最强大的人，以后很多事就交给你了。”', tags:['#领袖','#武力','#意志'], region:'dis',
+      { id:'zoya', name:'卓娅', title:'军团首领', quote:'你是我见过最强大的人，以后很多事就交给你了。', tags:['#领袖','#武力','#意志'], region:'dis',
         analysis:'人格底色：信奉暴力终结暴力，靠拳头和意志。行动策略：以绝对力量建立秩序，视部下为战友。',
         revelation:'你的强大毋庸置疑，但真正的力量也包含了信任与托付。你把后背交给战友的那一刻，比任何一次胜利都更有光芒。' },
-      { id:'langley', name:'兰利', title:'第九机关', quote:'“不要向我索取真实，有些真相只能用性命交换。”', tags:['#谋略','#忠诚','#守护'], region:'dis',
+      { id:'langley', name:'兰利', title:'第九机关', quote:'不要向我索取真实，有些真相只能用性命交换。', tags:['#谋略','#忠诚','#守护'], region:'dis',
         analysis:'人格底色：深入黑暗守护城市，背负恶名。行动策略：要求部下忠诚，自己承担所有污名。',
         revelation:'你习惯了在阴影中行走，把所有骂名扛在自己肩上。你相信目的的正当性可以洗刷手段的污迹。但偶尔，也有人想为你分担那份孤寂。' },
-      { id:'aien', name:'艾恩', title:'铁面医生', quote:'“在彼岸诊所，我只做我认为正确的事。”', tags:['#医术','#决绝','#彼岸'], region:'dis',
+      { id:'aien', name:'艾恩', title:'铁面医生', quote:'在彼岸诊所，我只做我认为正确的事。', tags:['#医术','#决绝','#彼岸'], region:'dis',
         analysis:'人格底色：为救病人不惜采用极端手段，被主流诟病却从不后悔。行动策略：在彼岸诊所救治狂厄感染者，坚持自己的医道。',
         revelation:'你的手术刀从不犹豫，因为你比任何人都清楚生命的重量。主流的声音无法动摇你，你只对自己的良心负责。这份决绝，是你作为医者的尊严。' },
-      { id:'chelsea', name:'切尔西伯爵', title:'宝石女王', quote:'“局长，考虑一下被我包养怎么样？”', tags:['#富有','#优雅','#自信'], region:'dis',
+      { id:'chelsea', name:'切尔西伯爵', title:'宝石女王', quote:'局长，考虑一下被我包养怎么样？', tags:['#富有','#优雅','#自信'], region:'dis',
         analysis:'人格底色：坐拥宝石产业的富家小姐，优雅而自信。行动策略：用财富和魅力让世界按自己的节奏运转。',
         revelation:'你天生就懂得如何让世界围着你转，宝石和你一样耀眼。你的慷慨和自信是与生俱来的天赋。在你眼里，真正珍贵的东西从来不是账户里的数字。' },
-      { id:'oak', name:'橡木匣', title:'亡者代言人', quote:'“你是比亡灵更有意思的存在。”', tags:['#死亡','#信息','#告别'], region:'dis',
+      { id:'oak', name:'橡木匣', title:'亡者代言人', quote:'你是比亡灵更有意思的存在。', tags:['#死亡','#信息','#告别'], region:'dis',
         analysis:'人格底色：被抛弃后对世界失望，从死役中获取信息。行动策略：主持告别仪式，渴望辛迪加重生。',
         revelation:'你习惯了与逝者对话，却忘了自己还活着。你收集了太多死亡的信息，但辛迪加的黎明同样值得你期待。偶尔，让生者给你一个拥抱吧。' },
-      { id:'hamel', name:'哈梅尔', title:'幻境舞者', quote:'“你将我从幻境中唤醒……可是，失去舞台的舞者，该去往哪里呢？”', tags:['#艺术','#牺牲','#幻觉'], region:'dis',
+      { id:'hamel', name:'哈梅尔', title:'幻境舞者', quote:'你将我从幻境中唤醒，可是失去舞台的舞者该去往哪里呢。', tags:['#艺术','#牺牲','#幻觉'], region:'dis',
         analysis:'人格底色：为镇压黑环牺牲自由，在幻境中独舞二十三年。行动策略：用舞蹈代替语言，用幻觉掩盖真实。',
         revelation:'你习惯了用舞蹈说话，用幻觉保护自己。但真实的世界里也有人愿意陪你共舞。脱下那件幻象织成的舞裙，你依然是最美的舞者。' },
-      { id:'cabernet', name:'卡门奈特', title:'美食品鉴师', quote:'“你的灵魂……在它成熟前，我愿意忍受饥饿。”', tags:['#欲望','#培养','#优雅'], region:'dis',
+      { id:'cabernet', name:'卡门奈特', title:'美食品鉴师', quote:'你的灵魂，在它成熟前，我愿意忍受饥饿。', tags:['#欲望','#培养','#优雅'], region:'dis',
         analysis:'人格底色：优雅的掠夺者，将进食升华为病态艺术。行动策略：纵容猎物使其灵魂更美味。',
         revelation:'你的品味无可挑剔，欲望是你创作的动力。但真正的满足或许不在于占有和品尝。克制带来的饥饿感，有时候比饱足更值得回味。' },
-      { id:'adela', name:'阿黛拉', title:'雾巷理发师', quote:'“呆在局长身边，就是我所期望的日常。”', tags:['#记忆','#日常','#剪刀'], region:'dis',
+      { id:'adela', name:'阿黛拉', title:'雾巷理发师', quote:'呆在局长身边，就是我所期望的日常。', tags:['#记忆','#日常','#剪刀'], region:'dis',
         analysis:'人格底色：为他人剪除烦恼记忆，自己却无法摆脱幻觉。行动策略：不断搬家寻找日常，最终在局长身边找回心跳。',
         revelation:'你习惯了替别人剪去烦恼，却把自己的记忆剪得支离破碎。你一直在寻找一个可以停靠的日常。现在你找到了，不用再搬家了。' },
-      { id:'dreya', name:'德雷雅', title:'未知渴求者', quote:'“量子场会吸引扭曲时空，而你……全都吸引着我。”', tags:['#求知','#侵蚀','#沉默'], region:'dis',
+      { id:'dreya', name:'德雷雅', title:'未知渴求者', quote:'量子场会吸引扭曲时空，而你全都吸引着我。', tags:['#求知','#侵蚀','#沉默'], region:'dis',
         analysis:'人格底色：为真理深入禁地被狂厄完全侵蚀。行动策略：沉默观测，只对局长有反应。',
         revelation:'你对未知的渴望让你坠入了深渊，但你也在深渊里找到了属于自己的黑洞。那个秘密吸引着你，也让你的沉默有了意义。' },
-      { id:'raven', name:'渡鸦', title:'自诩诗人', quote:'“我用羽毛笔记录着辛迪加的一切。”', tags:['#疯癫','#教育','#诗歌'], region:'dis',
+      { id:'raven', name:'渡鸦', title:'自诩诗人', quote:'我用羽毛笔记录着辛迪加的一切。', tags:['#疯癫','#教育','#诗歌'], region:'dis',
         analysis:'人格底色：用夸大事实搅浑辛迪加，逼毒瘤现身。行动策略：写蹩脚诗、办学堂，为流浪儿投入心血。',
         revelation:'你的疯狂是反抗的面具，蹩脚的诗歌里藏着最真挚的愿望。你想让辛迪加的孩子们有书可读，这份温柔比任何诗句都动人。' },
-      { id:'deren', name:'黛伦', title:'最佳导演', quote:'“你愿意成为我电影中的主角吗？”', tags:['#记录','#不认命','#观察'], region:'dis',
-        analysis:'人格底色：表面慵懒无所谓，实则看透愚昧。行动策略：暗中记录一切，等待拍摄“不认命”的故事。',
+      { id:'deren', name:'黛伦', title:'最佳导演', quote:'你愿意成为我电影中的主角吗？', tags:['#记录','#不认命','#观察'], region:'dis',
+        analysis:'人格底色：表面慵懒无所谓，实则看透愚昧。行动策略：暗中记录一切，等待拍摄不认命的故事。',
         revelation:'你曾经把自己的作品交给别人剪辑，失去了想表达的东西。但你还在记录，还在等待。你的镜头里，那些不认命的人就是你重启的理由。' },
-      { id:'nox', name:'诺克斯', title:'内海死神', quote:'“你让我察觉到许多不熟悉的情绪……我想留在你身边。”', tags:['#死神','#残骸','#渴望'], region:'dis',
+      { id:'nox', name:'诺克斯', title:'内海死神', quote:'你让我察觉到许多不熟悉的情绪，我想留在你身边。', tags:['#死神','#残骸','#渴望'], region:'dis',
         analysis:'人格底色：几乎没有生命迹象，凭借转化生命力延续。行动策略：把玩现代物品了解世界，渴望阳光。',
         revelation:'你被称为死神，却比任何人都渴望阳光。你试着了解这个世界，从游戏机到小家电。这份好奇心证明你从未真正死去。' },
-      { id:'eirene', name:'伊琳娜', title:'奎恩总裁', quote:'“你……属于我，我的棋子，我的珍藏。”', tags:['#棋局','#掌控','#交易'], region:'dis',
+      { id:'eirene', name:'伊琳娜', title:'奎恩总裁', quote:'你属于我，我的棋子，我的珍藏。', tags:['#棋局','#掌控','#交易'], region:'dis',
         analysis:'人格底色：将一切视为棋局，享受穷尽智慧的快感。行动策略：用金钱与地位作为筹码，让交易持续。',
         revelation:'你把世界看作棋盘，每一步都计算精妙。但你手中最珍贵的棋子，从来不在棋盘之上。有些东西，不能也不该用输赢来衡量。' },
-      { id:'crache', name:'科希', title:'流浪儿领袖', quote:'“你为什么没有早点来……”', tags:['#阴影','#庇护','#拒绝'], region:'dis',
+      { id:'crache', name:'科希', title:'流浪儿领袖', quote:'你为什么没有早点来。', tags:['#阴影','#庇护','#拒绝'], region:'dis',
         analysis:'人格底色：庇护辛迪加边缘孩童，拒绝大人世界。行动策略：藏匿于阴影，只帮助同龄人。',
         revelation:'你不信任大人，因为他们让太多孩子失望过。但你的庇护所里一直缺一个位置。那个人来了，虽然有点晚，但还是来了。' },
-      { id:'enfer', name:'恩菲尔', title:'恐惧雕刻家', quote:'“我希望看到由内而外迸发的生命，开出名为爱的花。”', tags:['#恐惧','#艺术','#依赖'], region:'dis',
+      { id:'enfer', name:'恩菲尔', title:'恐惧雕刻家', quote:'我希望看到由内而外迸发的生命，开出名为爱的花。', tags:['#恐惧','#艺术','#依赖'], region:'dis',
         analysis:'人格底色：用恐惧让人显露真实，同时追求恐惧与爱。行动策略：孤傲独行，对局长有特别依赖。',
         revelation:'你用恐惧雕刻真实，却在自己心里埋下了爱的种子。母亲的牺牲让你同时追求这两个主题。在你为局长雕刻的雕像里，恐惧褪去，只剩下温暖。' },
-      { id:'serpent', name:'娜恰', title:'蛇之女', quote:'“可以给我一个拥抱吗？你的温度让我想起了春天。”', tags:['#冷血','#渴望','#伪装'], region:'dis',
+      { id:'serpent', name:'娜恰', title:'蛇之女', quote:'可以给我一个拥抱吗？你的温度让我想起了春天。', tags:['#冷血','#渴望','#伪装'], region:'dis',
         analysis:'人格底色：被蛇毒与狂厄重塑，介于人类与蛇之间。行动策略：用猎奇表演伪装，渴望欢笑与温暖。',
         revelation:'你是冷血的蛇，却比任何人都渴望温暖。你用表演取悦观众，心里却只想要一个真诚的拥抱。那个人让你想起了春天。' },
-      { id:'summer', name:'夏音', title:'智力天才', quote:'“有兴趣做机甲驾驶员吗？”', tags:['#天才','#孤独','#机械'], region:'dis',
+      { id:'summer', name:'夏音', title:'智力天才', quote:'有兴趣做机甲驾驶员吗？', tags:['#天才','#孤独','#机械'], region:'dis',
         analysis:'人格底色：智力碾压常人，行为停留在高中女生。行动策略：依赖机械，用动画填补人际空白。',
         revelation:'你的智商没有人能测出上限，但你想要的不过是有人陪你一起看动画。你造了那么多机器人，心里最想要的还是一个真正的朋友。' },
-      { id:'rohu', name:'罗睺', title:'前FAC精锐', quote:'“过去我的眼前只有黑暗……可你做的一切就像给这片黑暗打上了一束光。”', tags:['#忠诚','#守护','#监视'], region:'dis',
+      { id:'rohu', name:'罗睺', title:'前FAC精锐', quote:'过去我的眼前只有黑暗，可你做的一切就像给这片黑暗打上了一束光。', tags:['#忠诚','#守护','#监视'], region:'dis',
         analysis:'人格底色：忠诚至上，以伤换力。行动策略：既保护局长，也监视局长以防越界。',
         revelation:'你的忠诚是你的信仰，也是你的枷锁。你习惯了用伤换力，把守护和监视绑在一起。但那个人让你愿意放下一些戒备，是一束光照进了黑暗。' },
-      { id:'coquelic', name:'可可莉克', title:'花园业师', quote:'“我希望能沉睡在你这道永不安息的湛蓝色的深渊里。”', tags:['#娇贵','#锋利','#花'], region:'dis',
+      { id:'coquelic', name:'可可莉克', title:'花园业师', quote:'我希望能沉睡在你这道永不安息的湛蓝色的深渊里。', tags:['#娇贵','#锋利','#花'], region:'dis',
         analysis:'人格底色：表面柔弱需要照料，实则是刺客组织掌控者。行动策略：以花喻人，珍惜花园里的每一朵花。',
         revelation:'你以娇贵示人，却握着最锋利的剑。你珍惜花园里的每一朵花，希望她们长出划开苦难的枝叶。在你乐意的时候，你比谁都认真。' },
-      { id:'donald', name:'唐', title:'前锈火领袖', quote:'“会叫我挚友的人已经不在了……”', tags:['#乐天','#重建','#挚友'], region:'dis',
+      { id:'donald', name:'唐', title:'前锈火领袖', quote:'会叫我挚友的人已经不在了。', tags:['#乐天','#重建','#挚友'], region:'dis',
         analysis:'人格底色：被背叛的英雄，经历崩溃后依然乐天。行动策略：诱导所有人协助西区重建。',
-        revelation:'你经历了那么多，却还是那个爱开玩笑、爱吃炖肉的唐。你的乐观是西区的火焰，烧掉铁锈，照亮前路。新的“挚友”虽然让你脸红，但你已经准备好了。' },
-      { id:'pearl', name:'珀尔夫人', title:'剧院老板娘', quote:'“与你在一起的每一刻，似乎都无法预料下一步会通往哪里。”', tags:['#享乐','#操盘','#疯狂'], region:'dis',
+        revelation:'你经历了那么多，却还是那个爱开玩笑、爱吃炖肉的唐。你的乐观是西区的火焰，烧掉铁锈，照亮前路。新的挚友虽然让你脸红，但你已经准备好了。' },
+      { id:'pearl', name:'珀尔夫人', title:'剧院老板娘', quote:'与你在一起的每一刻，似乎都无法预料下一步会通往哪里。', tags:['#享乐','#操盘','#疯狂'], region:'dis',
         analysis:'人格底色：纵情享受的享乐主义者，把爱分给所有人。行动策略：掌控舞台，邀请局长共舞。',
         revelation:'你把爱分给所有人，却从不给任何人全部。这是你的生存之道。但那个人让你想跳一支只属于两个人的舞，火焰吞噬剧院也在所不惜。' },
-      { id:'vanilla', name:'瓦尼菈', title:'守望哨兵', quote:'“你的到来告诉我，永恒的第一秒，已经过去。”', tags:['#守望','#执念','#锚点'], region:'dis',
+      { id:'vanilla', name:'瓦尼菈', title:'守望哨兵', quote:'你的到来告诉我，永恒的第一秒，已经过去。', tags:['#守望','#执念','#锚点'], region:'dis',
         analysis:'人格底色：独自守护前哨站十年，被时间消磨殆尽。行动策略：依附于机甲的执念，观测局长。',
         revelation:'你独自守着那个前哨站，久到时间都失去了意义。你是永恒中的锚点。那个人的到来让你重新开始计时，永恒终于有了第一秒。' },
-      { id:'bianca', name:'毕安卡', title:'正义记者', quote:'“采访一下局长，请问你对未来的感情生活有什么规划吗？”', tags:['#正义','#亢奋','#追问'], region:'dis',
+      { id:'bianca', name:'毕安卡', title:'正义记者', quote:'采访一下局长，请问你对未来的感情生活有什么规划吗？', tags:['#正义','#亢奋','#追问'], region:'dis',
         analysis:'人格底色：偏执追求是非正确，用摄像机曝光黑暗。行动策略：亢奋地调查、追问、打探。',
         revelation:'你拿着摄像机追着真相跑，账户被封了无数次也不在乎。你的八十页采访提纲里，藏着的不只是对新闻的执着。你也想知道那个人心里有没有你的位置。' },
-      { id:'hestia', name:'赫斯提亚', title:'盲眼圣女', quote:'“都怪你……我连怎么独自生存下去都忘记了。”', tags:['#盲眼','#火炬','#依赖'], region:'dis',
+      { id:'hestia', name:'赫斯提亚', title:'盲眼圣女', quote:'都怪你，我连怎么独自生存下去都忘记了。', tags:['#盲眼','#火炬','#依赖'], region:'dis',
         analysis:'人格底色：被一次次丢下的幸存者，用火炬驱散黑暗。行动策略：唯独在局长接近时平稳正向。',
         revelation:'你的眼睛看不见，但你的火炬从不会熄灭。你习惯了被丢下，习惯了独自在黑暗中生存。那个人却一次次回来找你，让你忘记了怎么独自活下去。' },
-      { id:'pylgia', name:'派尔琪雅', title:'深海女儿', quote:'“如果有一天你走到生命的终点……那来见我吧，融于我身。”', tags:['#深海','#异类','#循环'], region:'dis',
+      { id:'pylgia', name:'派尔琪雅', title:'深海女儿', quote:'如果有一天你走到生命的终点，那来见我吧，融于我身。', tags:['#深海','#异类','#循环'], region:'dis',
         analysis:'人格底色：比陆地更属于海洋，无法融入人类。行动策略：只对局长产生反应，希望共存。',
         revelation:'你在深海不会迷失，却无法融入人类的社会。你把死亡看作循环的一部分。但那个人的出现让你想多停留片刻，在你融于深海之前。' },
-      // 东洲阵营
-      { id:'duro', name:'杜若', title:'神话学者', quote:'“你给了我真实、信任与归宿，我算是占尽你便宜了。”', tags:['#学者','#浪漫','#联结'], region:'dong',
+      { id:'duro', name:'杜若', title:'神话学者', quote:'你给了我真实、信任与归宿，我算是占尽你便宜了。', tags:['#学者','#浪漫','#联结'], region:'dong',
         analysis:'人格底色：质疑神话，又续写人的神话。行动策略：斡旋记录，用故事联结异乡。',
         revelation:'你质疑了一辈子的神话，最后却选择续写属于人的神话。你从东洲来到狄斯，在这里找到了真实与归宿。你的札记永远写不完，因为故事还在继续。' },
-      { id:'jichuan', name:'霁川', title:'朔雪山庄', quote:'“余生虽短，但能与你相逢，也算苍天公平一回。”', tags:['#侠道','#托付','#病骨'], region:'dong',
+      { id:'jichuan', name:'霁川', title:'朔雪山庄', quote:'余生虽短，但能与你相逢，也算苍天公平一回。', tags:['#侠道','#托付','#病骨'], region:'dong',
         analysis:'人格底色：病骨侠心，以残躯行侠义。行动策略：以自身为局肃清奸恶，托付公义。',
         revelation:'你的身体已经被狂厄侵蚀殆尽，但你还在行侠仗义。你说恶人长命、仁义者不得善终，却还是选择做后者。你把公义托付给了那个人，残焰亦能照亮前路。' },
-      { id:'yao', name:'曜', title:'金乌', quote:'“下次十日再临之时，还请由你持弓。”', tags:['#灾厄','#重生','#太阳'], region:'dong',
+      { id:'yao', name:'曜', title:'金乌', quote:'下次十日再临之时，还请由你持弓。', tags:['#灾厄','#重生','#太阳'], region:'dong',
         analysis:'人格底色：灾厄与神性结合，重生成长。行动策略：依赖局长，定期探望。',
         revelation:'你曾是灾厄的化身，十日凌空的预兆。如今你以幼童之姿重生，在那个人身边重新长大。你定期飞回管理局，留下带火的翎羽。归处即心安。' },
-      { id:'yingying', name:'萦萦', title:'紫藤花仙', quote:'“紫藤花听到你的愿望了……你愿意听听我的愿望吗？”', tags:['#愿望','#守护','#幻境'], region:'dong',
+      { id:'yingying', name:'萦萦', title:'紫藤花仙', quote:'紫藤花听到你的愿望了，你愿意听听我的愿望吗？', tags:['#愿望','#守护','#幻境'], region:'dong',
         analysis:'人格底色：背负万人求生愿望，燃烧自己维持幻境。行动策略：用幻境安抚怨魂，守护误入者。',
         revelation:'你背负着万人的求生愿望，在紫藤树下守了百年。你习惯了为他人实现愿望，却把自己的愿望藏在心底。现在你想永远留在那个人身边，这是你唯一为自己许的愿。' },
-      { id:'yugu', name:'玉骨', title:'说书人', quote:'“在下日夜都在盼望，盼望着您倾情上演何种结局。”', tags:['#悲剧','#故事','#观众'], region:'dong',
+      { id:'yugu', name:'玉骨', title:'说书人', quote:'在下日夜都在盼望，盼望着您倾情上演何种结局。', tags:['#悲剧','#故事','#观众'], region:'dong',
         analysis:'人格底色：痴迷悲剧，收集陨落城邦的故事。行动策略：记录并等待终局，留在局长身边。',
         revelation:'你收集了那么多城邦陨落的故事，痴迷于毁灭的美学。但你留在管理局，在那本故事册的末尾多加了一页白纸。你想记录的是和那个人一同走向的结局。' },
-      { id:'xiaofeng', name:'啸风', title:'白虎山君', quote:'“身板儿这么弱，却能干那么多捅破天的大事儿。”', tags:['#野兽','#山君','#食欲'], region:'dong',
+      { id:'xiaofeng', name:'啸风', title:'白虎山君', quote:'身板儿这么弱，却能干那么多捅破天的大事儿。', tags:['#野兽','#山君','#食欲'], region:'dong',
         analysis:'人格底色：被老虎养大，被人类奉为山君。行动策略：信奉弱肉强食，却实际履行守护职责。',
         revelation:'你说自己只是山里的老虎，不爱管人类的事。但你接受了村民的供奉，也在实际守护着他们。嘴上说着弱肉强食，心里却有一份未曾明言的责任感。' },
-      { id:'lichen', name:'离尘', title:'玄修士', quote:'“撕去符条，铜铃作响……请再次将我们系为一体吧。”', tags:['#道术','#追寻','#符文'], region:'dong',
+      { id:'lichen', name:'离尘', title:'玄修士', quote:'撕去符条，铜铃作响，请再次将我们系为一体吧。', tags:['#道术','#追寻','#符文'], region:'dong',
         analysis:'人格底色：道术与科学结合，耗尽家财追寻师父。行动策略：以火焰消解失真，以红线为约。',
         revelation:'你修习道术，又接受科学，用两种方式追寻同一个答案。你耗尽家财寻找师父的下落，那份执念烧成了符上的火焰。那个人以红线为约，将你们系为一体。' },
-      { id:'jelena', name:'耶莱娜', title:'贴身管家', quote:'“我带着仇恨踏上这片土地，却从未想过还会遇见想要珍惜的人。”', tags:['#潜伏','#照料','#爱恨'], region:'dong',
+      { id:'jelena', name:'耶莱娜', title:'贴身管家', quote:'我带着仇恨踏上这片土地，却从未想过还会遇见想要珍惜的人。', tags:['#潜伏','#照料','#爱恨'], region:'dong',
         analysis:'人格底色：表面温柔管家，背后潜伏情报人员。行动策略：用母亲般的温暖照顾身边的人。',
         revelation:'你带着任务和仇恨来到狄斯，用温柔作为伪装。但你照顾小主人的那些日子，读故事书的午后，都成了真实的温暖。你遇见了想要珍惜的人，爱和恨可以同时存在。' }
     ];
 
-    // 题库：30题
-    const questions = [
+    var questions = [
       { text: "面对一个混乱无序的环境，你更倾向于怎样应对？", opts:[
-        { text:"制定规则，用强硬手段逐步恢复秩序", scores:{zoya:3,langley:2,eirene:2,serin:1,jichuan:1,coquelic:-1,yao:-1,xiaofeng:-1,'000':-1,raven:-1} },
-        { text:"潜伏在暗处，先收集足够的情报再做打算", scores:{lanjiu:3,angel:2,serin:2,langley:2,oak:1,zoya:-1,yao:-1,xiaofeng:-1,chelsea:0,aien:0} },
-        { text:"直接用力量迅速平定乱象，不拖泥带水", scores:{zoya:3,rohu:2,angel:1,nox:1,xiaofeng:2,serin:-1,langley:-1,eirene:-1,aien:-1,duro:-1} },
-        { text:"在各方之间周旋协调，让局面达成平衡", scores:{duro:3,pearl:2,serin:2,langley:1,eirene:1,chelsea:2,zoya:-1,angel:-1,aien:0,'000':1} } ] },
+        { text:"制定规则，用强硬手段逐步恢复秩序", scores:{zoya:3,langley:2,eirene:2,serin:1,jichuan:2,aien:1,rohu:1,coquelic:-1,yao:-1,xiaofeng:-1,oak:-1,hamel:-1,dreya:-1,raven:-1,enfer:-1,serpent:-1} },
+        { text:"潜伏在暗处，先收集足够的情报再做打算", scores:{lanjiu:3,angel:2,serin:2,langley:2,oak:3,cabernet:1,dreya:1,raven:1,deren:1,nox:1,crache:2,enfer:1,bianca:2,pylgia:1,adela:0,'000':2} },
+        { text:"直接用力量迅速平定乱象，不拖泥带水", scores:{zoya:3,rohu:2,angel:1,nox:1,xiaofeng:3,serin:-1,langley:-1,eirene:-1,aien:-1,duro:-1,lanjiu:-1,oak:-1,hamel:-1,cabernet:-1,adela:-1,'000':-1} },
+        { text:"在各方之间周旋协调，让局面达成平衡", scores:{duro:3,pearl:2,serin:2,langley:1,eirene:1,chelsea:2,lanjiu:1,hamel:1,cabernet:1,adela:1,deren:1,donald:2,bianca:1,yingying:1,yugu:1,jelena:2,'000':1} } ] },
       { text: "当亲近的人情绪崩溃时，你通常会怎么做？", opts:[
-        { text:"冷静地帮对方分析问题，给出解决方案", scores:{serin:3,langley:2,eirene:2,duro:1,aien:3,yingying:-1,hestia:-1,'000':1,chelsea:0} },
-        { text:"先陪着对方，让情绪有一个发泄的出口", scores:{yingying:3,hestia:2,jichuan:2,jelena:3,adela:2,serin:0,langley:-1,aien:0,'000':1} },
-        { text:"直接帮对方把麻烦事都处理掉", scores:{zoya:3,rohu:2,jichuan:2,coquelic:1,jelena:2,chelsea:3,serin:0,angel:0,langley:-1,aien:1} },
-        { text:"给对方一些空间，相信能够自己调整过来", scores:{angel:3,lanjiu:2,oak:2,adela:1,donald:1,aien:-1,yingying:-1,hestia:-1,jelena:-1,'000':0} } ] },
+        { text:"冷静地帮对方分析问题，给出解决方案", scores:{serin:3,langley:2,eirene:2,duro:1,aien:3,lanjiu:1,dreya:1,summer:2,rohu:1,vanilla:1,lichen:1,'000':2} },
+        { text:"先陪着对方，让情绪有一个发泄的出口", scores:{yingying:3,hestia:2,jichuan:2,jelena:3,adela:2,hamel:2,cabernet:1,raven:1,deren:1,enfer:1,serpent:3,donald:2,pearl:1,bianca:1,pylgia:1,duro:2,yugu:1,'000':1} },
+        { text:"直接帮对方把麻烦事都处理掉", scores:{zoya:3,rohu:2,jichuan:2,coquelic:1,jelena:2,chelsea:3,aien:1,nox:1,crache:1,donald:1,hestia:1} },
+        { text:"给对方一些空间，相信能够自己调整过来", scores:{angel:3,lanjiu:2,oak:2,adela:1,donald:1,serin:1,dreya:2,raven:1,deren:2,nox:2,crache:1,enfer:1,summer:1,vanilla:2,pylgia:2,yugu:1,lichen:1,'000':1} } ] },
       { text: "你更欣赏哪种力量的表现形式？", opts:[
-        { text:"绝对的压制力，让人无法反抗", scores:{zoya:3,nox:2,rohu:2,xiaofeng:3,yao:1,serin:-1,langley:-1,duro:-1,aien:-1,chelsea:-1} },
-        { text:"隐蔽的渗透与操控，在无形中掌控局面", scores:{lanjiu:3,serin:2,langley:2,eirene:2,pearl:1,zoya:-1,yao:-1,xiaofeng:-1,aien:0,'000':2} },
-        { text:"优雅而精准，以最小的代价达成目的", scores:{serin:3,coquelic:3,eirene:2,duro:2,hamel:1,chelsea:3,zoya:0,angel:-1,xiaofeng:-1,aien:1} },
-        { text:"狂放不羁，完全听从自己的本能", scores:{yao:3,xiaofeng:3,angel:2,nox:1,raven:2,serin:-2,langley:-2,eirene:-1,aien:-1,'000':1} } ] },
+        { text:"绝对的压制力，让人无法反抗", scores:{zoya:3,nox:2,rohu:2,xiaofeng:3,yao:1,serin:-1,langley:-1,duro:-1,aien:-1,chelsea:-1,lanjiu:-1,hamel:-1,adela:-1,dreya:-1,deren:-1,crache:-1,enfer:-1} },
+        { text:"隐蔽的渗透与操控，在无形中掌控局面", scores:{lanjiu:3,serin:2,langley:2,eirene:2,pearl:1,oak:1,cabernet:2,dreya:1,raven:1,deren:1,crache:1,bianca:1,jelena:1,'000':2} },
+        { text:"优雅而精准，以最小的代价达成目的", scores:{serin:3,coquelic:3,eirene:2,duro:2,hamel:1,chelsea:3,aien:1,lanjiu:1,langley:1,cabernet:3,adela:1,enfer:1,serpent:1,summer:1,pearl:2,vanilla:1,yingying:1,yugu:1,lichen:1,jelena:1,'000':1} },
+        { text:"狂放不羁，完全听从自己的本能", scores:{yao:3,xiaofeng:3,angel:2,nox:1,raven:2,zoya:1,crache:1,enfer:1,serpent:1,pylgia:1,'000':2} } ] },
       { text: "你更喜欢什么样的美学风格？", opts:[
-        { text:"东方式的留白与意境，含蓄深远", scores:{duro:3,yingying:3,jichuan:3,yugu:3,lichen:2,yao:2,jelena:2,zoya:-1,lanjiu:-1,chelsea:0} },
-        { text:"狄斯城的工业感与秩序，冷峻精密", scores:{serin:3,langley:3,lanjiu:2,eirene:2,zoya:1,aien:2,duro:-1,jichuan:-1,chelsea:1,'000':2} },
-        { text:"繁复华丽的装饰，充满戏剧张力", scores:{pearl:3,coquelic:3,cabernet:3,hamel:2,chelsea:3,yingying:1,serin:0,aien:-1,'000':0} },
-        { text:"极简与功能至上，去除一切冗余", scores:{vanilla:3,summer:2,angel:2,lanjiu:1,aien:3,pearl:-1,coquelic:-1,cabernet:-1,chelsea:-1,'000':2} } ] },
+        { text:"东方式的留白与意境，含蓄深远", scores:{duro:3,yingying:3,jichuan:3,yugu:3,lichen:2,yao:2,jelena:2,hamel:1,adela:1,hestia:1} },
+        { text:"狄斯城的工业感与秩序，冷峻精密", scores:{serin:3,langley:3,lanjiu:2,eirene:2,zoya:1,aien:2,oak:1,dreya:1,deren:1,summer:2,rohu:1,donald:1,vanilla:2,bianca:1,'000':2} },
+        { text:"繁复华丽的装饰，充满戏剧张力", scores:{pearl:3,coquelic:3,cabernet:3,hamel:2,chelsea:3,yingying:1,deren:1,enfer:2,serpent:1,jelena:1} },
+        { text:"极简与功能至上，去除一切冗余", scores:{vanilla:3,summer:2,angel:2,lanjiu:1,aien:3,serin:1,langley:1,oak:2,adela:1,dreya:3,crache:1,pylgia:2,lichen:1,'000':2} } ] },
       { text: "你如何看待金钱和物质？", opts:[
-        { text:"金钱是工具，用来实现更重要的目标", scores:{langley:3,serin:2,lanjiu:2,eirene:3,aien:2,chelsea:1,zoya:1,duro:1,pearl:-1} },
-        { text:"有钱才能有自由和选择权", scores:{chelsea:3,lanjiu:3,eirene:2,pearl:2,zoya:0,serin:0,langley:0,aien:-1,yingying:-1} },
-        { text:"够用就好，不太在意这些", scores:{angel:3,oak:3,nox:3,adela:2,hestia:2,chelsea:-2,zoya:0,aien:1,duro:1} },
-        { text:"赚钱就是为了享受生活", scores:{pearl:3,coquelic:3,chelsea:3,cabernet:2,raven:1,serin:-1,langley:-1,aien:-1,vanilla:-1} } ] },
+        { text:"金钱是工具，用来实现更重要的目标", scores:{langley:3,serin:2,lanjiu:2,eirene:3,aien:2,chelsea:1,zoya:1,duro:1,hamel:1,adela:1,dreya:1,deren:1,summer:1,rohu:1,donald:2,vanilla:1,bianca:1,hestia:1,lichen:1,jelena:1,'000':1} },
+        { text:"有钱才能有自由和选择权", scores:{chelsea:3,lanjiu:3,eirene:2,pearl:2,cabernet:1} },
+        { text:"够用就好，不太在意这些", scores:{angel:3,oak:3,nox:3,adela:2,hestia:2,aien:1,duro:1,hamel:2,dreya:2,raven:1,deren:1,crache:2,enfer:1,serpent:1,summer:1,donald:1,vanilla:2,pylgia:3,yingying:1,jichuan:1,yugu:1,lichen:1,yao:1,xiaofeng:1,'000':1} },
+        { text:"赚钱就是为了享受生活", scores:{pearl:3,coquelic:3,chelsea:3,cabernet:2,raven:1,hamel:1,deren:1,serpent:1,yao:1} } ] },
       { text: "在一个团队中，你通常扮演什么角色？", opts:[
-        { text:"做决定的那个人，喜欢主导方向", scores:{zoya:3,eirene:3,langley:2,serin:1,rohu:1,coquelic:1,chelsea:2,angel:-1,adela:-1,aien:0} },
-        { text:"协调大家的想法，让团队更和谐", scores:{duro:3,jelena:3,donald:2,adela:2,yingying:1,chelsea:1,zoya:0,serin:0,angel:-1,aien:1} },
-        { text:"独立行动，在关键时刻才会出手", scores:{angel:3,oak:3,nox:2,lanjiu:2,mantis:1,aien:2,zoya:-1,langley:-1,donald:-1,chelsea:-1} },
-        { text:"在幕后出谋划策，不喜欢抛头露面", scores:{serin:3,langley:2,lanjiu:2,vanilla:1,aien:1,'000':3,zoya:-1,rohu:-1,xiaofeng:-1,chelsea:0} } ] },
-      { text: "对于“规则”这两个字，你的看法更接近？", opts:[
-        { text:"规则是秩序的基石，需要被遵守", scores:{langley:3,serin:2,vanilla:2,eirene:2,jichuan:1,aien:2,lanjiu:-1,angel:-1,yao:-1,'000':-1} },
-        { text:"规则就是用来打破或重新塑造的", scores:{zoya:3,yao:2,xiaofeng:2,raven:3,angel:1,'000':2,serin:-2,langley:-2,vanilla:-2,aien:-2} },
-        { text:"利用规则为自己争取最大利益", scores:{lanjiu:3,eirene:3,serin:2,pearl:2,chelsea:3,zoya:0,langley:0,jichuan:-1,aien:-1,'000':1} },
-        { text:"规则应该由我来制定", scores:{zoya:3,coquelic:3,eirene:2,serin:2,langley:1,chelsea:2,duro:-1,yingying:-1,jelena:-1,aien:-1} } ] },
+        { text:"做决定的那个人，喜欢主导方向", scores:{zoya:3,eirene:3,langley:2,serin:1,rohu:1,coquelic:1,chelsea:2,lanjiu:1,cabernet:1,pearl:1,xiaofeng:1} },
+        { text:"协调大家的想法，让团队更和谐", scores:{duro:3,jelena:3,donald:2,adela:2,yingying:1,chelsea:1,aien:1,hamel:2,raven:1,deren:1,serpent:1,pearl:1,bianca:1,hestia:1,jichuan:1,'000':1} },
+        { text:"独立行动，在关键时刻才会出手", scores:{angel:3,oak:3,nox:2,lanjiu:2,aien:2,serin:1,dreya:2,raven:1,deren:1,crache:3,enfer:1,summer:1,vanilla:1,bianca:1,pylgia:2,lichen:1,yao:1,xiaofeng:2,'000':1} },
+        { text:"在幕后出谋划策，不喜欢抛头露面", scores:{serin:3,langley:2,lanjiu:2,vanilla:1,aien:1,angel:1,oak:1,cabernet:1,dreya:1,deren:2,crache:1,summer:1,bianca:2,yugu:1,'000':3} } ] },
+      { text: "对于规则这两个字，你的看法更接近？", opts:[
+        { text:"规则是秩序的基石，需要被遵守", scores:{langley:3,serin:2,vanilla:2,eirene:2,jichuan:1,aien:2,adela:1,dreya:1,rohu:1,duro:1,lichen:1,jelena:1} },
+        { text:"规则就是用来打破或重新塑造的", scores:{zoya:3,yao:2,xiaofeng:2,raven:3,angel:1,oak:1,deren:1,nox:2,crache:1,enfer:1,donald:1,pylgia:1,'000':2} },
+        { text:"利用规则为自己争取最大利益", scores:{lanjiu:3,eirene:3,serin:2,pearl:2,chelsea:3,cabernet:2,'000':2} },
+        { text:"规则应该由我来制定", scores:{zoya:3,coquelic:3,eirene:2,serin:2,langley:1,chelsea:2,lanjiu:1,cabernet:1,pearl:1,xiaofeng:1} } ] },
       { text: "你最害怕的情况是？", opts:[
-        { text:"事情脱离掌控，无法预料下一步", scores:{serin:3,langley:3,lanjiu:2,eirene:2,aien:1,yao:-1,xiaofeng:-1,raven:-1,chelsea:0,'000':-1} },
-        { text:"被自己信任的人从背后捅刀子", scores:{angel:3,jichuan:2,yingying:2,rohu:2,jelena:3,serin:0,langley:0,zoya:0,aien:1,chelsea:1} },
-        { text:"自己的存在被世界彻底遗忘", scores:{yingying:3,hestia:3,eve:2,yugu:2,'000':1,zoya:0,serin:0,langley:0,chelsea:0,aien:0} },
-        { text:"没有能力保护对自己重要的人", scores:{zoya:3,rohu:3,jichuan:3,coquelic:2,hestia:2,aien:3,serin:0,lanjiu:-1,eirene:-1,chelsea:1} } ] },
+        { text:"事情脱离掌控，无法预料下一步", scores:{serin:3,langley:3,lanjiu:2,eirene:2,aien:1,dreya:1,vanilla:1} },
+        { text:"被自己信任的人从背后捅刀子", scores:{angel:3,jichuan:2,yingying:2,rohu:2,jelena:3,chelsea:1,oak:1,hamel:1,adela:1,deren:1,crache:1,serpent:1,bianca:1,hestia:1,duro:1} },
+        { text:"自己的存在被世界彻底遗忘", scores:{yingying:3,hestia:3,yugu:2,hamel:1,adela:1,dreya:1,deren:1,nox:1,crache:1,enfer:1,serpent:1,vanilla:1,pylgia:1,'000':1} },
+        { text:"没有能力保护对自己重要的人", scores:{zoya:3,rohu:3,jichuan:3,coquelic:2,hestia:2,aien:3,chelsea:1,langley:1,angel:1,oak:1,hamel:1,adela:1,nox:1,crache:2,donald:2,vanilla:1,duro:1,yingying:1,jelena:2,xiaofeng:1} } ] },
       { text: "面对曾经伤害过你的人，你会？", opts:[
-        { text:"正面回击，用力量彻底清算", scores:{zoya:3,rohu:2,xiaofeng:3,yao:1,raven:2,serin:-1,langley:-1,duro:-1,aien:-1,chelsea:0} },
-        { text:"耐心布局，等待最合适的时机复仇", scores:{lanjiu:3,serin:2,langley:2,eirene:2,angel:1,aien:1,zoya:0,duro:-1,chelsea:1,'000':2} },
-        { text:"尝试去理解对方的动机，或许会选择放下", scores:{duro:3,yingying:3,jichuan:2,jelena:3,hamel:1,zoya:-1,lanjiu:-1,angel:-1,aien:2,chelsea:-1} },
-        { text:"交给规则或命运去裁决，不再纠结", scores:{serin:2,jichuan:2,yugu:2,vanilla:1,lichen:1,aien:2,zoya:0,angel:0,raven:-1,chelsea:0} } ] },
+        { text:"正面回击，用力量彻底清算", scores:{zoya:3,rohu:2,xiaofeng:3,yao:1,raven:2,angel:1,nox:1} },
+        { text:"耐心布局，等待最合适的时机复仇", scores:{lanjiu:3,serin:2,langley:2,eirene:2,angel:1,aien:1,chelsea:1,oak:1,cabernet:2,dreya:1,raven:1,serpent:1,pearl:1,bianca:1,'000':2} },
+        { text:"尝试去理解对方的动机，或许会选择放下", scores:{duro:3,yingying:3,jichuan:2,jelena:3,hamel:1,aien:2,serin:1,adela:1,deren:1,crache:1,enfer:1,serpent:1,vanilla:1,hestia:1,pylgia:1,yugu:1,lichen:1} },
+        { text:"交给规则或命运去裁决，不再纠结", scores:{serin:2,jichuan:2,yugu:2,vanilla:1,lichen:1,aien:2,langley:1,oak:1,adela:1,dreya:1,deren:1,nox:1,pylgia:1,duro:1} } ] },
       { text: "哪句话更贴近你的人生态度？", opts:[
-        { text:"强者制定规则，弱者才需要遵守", scores:{zoya:3,eirene:2,coquelic:2,xiaofeng:3,serin:0,duro:-1,yingying:-1,jichuan:-1,aien:-2,chelsea:1} },
-        { text:"即使身处低谷，也要抬头看星星", scores:{yingying:3,jichuan:3,donald:3,hestia:2,hamel:2,aien:1,zoya:-1,lanjiu:-1,eirene:-1,chelsea:0} },
-        { text:"知识是唯一可靠的武器", scores:{summer:3,serin:2,langley:2,duro:2,aien:3,yao:-1,xiaofeng:-1,raven:-1,chelsea:0,'000':2} },
-        { text:"自由比什么都重要", scores:{yao:3,angel:3,xiaofeng:3,raven:2,nox:1,'000':2,serin:-1,langley:-1,rohu:-1,aien:-1} } ] },
+        { text:"强者制定规则，弱者才需要遵守", scores:{zoya:3,eirene:2,coquelic:2,xiaofeng:3,chelsea:1,lanjiu:1,cabernet:1} },
+        { text:"即使身处低谷，也要抬头看星星", scores:{yingying:3,jichuan:3,donald:3,hestia:2,hamel:2,aien:1,serin:1,angel:1,oak:1,adela:2,dreya:1,raven:1,deren:1,nox:1,crache:1,enfer:1,serpent:1,vanilla:1,bianca:1,pylgia:1,duro:2,yugu:1,lichen:1,jelena:2} },
+        { text:"知识是唯一可靠的武器", scores:{summer:3,serin:2,langley:2,duro:2,aien:3,lanjiu:1,oak:1,dreya:3,deren:1,vanilla:2,bianca:1,pylgia:1,jichuan:1,yugu:1,lichen:2,'000':2} },
+        { text:"自由比什么都重要", scores:{yao:3,angel:3,xiaofeng:3,raven:2,nox:1,zoya:1,oak:1,dreya:1,deren:1,crache:2,enfer:1,serpent:1,donald:1,pearl:1,pylgia:2,lichen:1,'000':2} } ] },
       { text: "你的行事风格更偏向？", opts:[
-        { text:"想到就做，不喜欢拖延", scores:{zoya:3,yao:2,xiaofeng:3,rohu:2,raven:2,serin:-1,langley:-1,aien:0,chelsea:1,'000':1} },
-        { text:"根据情况灵活调整，不固执", scores:{lanjiu:3,angel:2,pearl:2,donald:2,serin:1,chelsea:2,langley:0,zoya:0,vanilla:-1,aien:1} },
-        { text:"反复思考，确认万无一失再行动", scores:{serin:3,langley:3,eirene:2,vanilla:2,aien:3,zoya:-1,yao:-1,xiaofeng:-1,chelsea:-1,'000':1} },
-        { text:"凭感觉走，跟着直觉做决定", scores:{yao:3,yingying:2,raven:2,hamel:2,nox:1,'000':2,serin:-1,langley:-1,aien:-1,chelsea:0} } ] },
+        { text:"想到就做，不喜欢拖延", scores:{zoya:3,yao:2,xiaofeng:3,rohu:2,raven:2,angel:1,nox:1,crache:1,donald:1} },
+        { text:"根据情况灵活调整，不固执", scores:{lanjiu:3,angel:2,pearl:2,donald:2,serin:1,chelsea:2,aien:1,oak:1,hamel:1,cabernet:1,adela:1,raven:1,deren:1,serpent:1,bianca:1,pylgia:1,duro:1,yingying:1,lichen:1,jelena:1,'000':1} },
+        { text:"反复思考，确认万无一失再行动", scores:{serin:3,langley:3,eirene:2,vanilla:2,aien:3,lanjiu:1,oak:1,dreya:2,deren:2,enfer:1,summer:2,bianca:1,duro:1,jichuan:1,yugu:1,lichen:2,'000':2} },
+        { text:"凭感觉走，跟着直觉做决定", scores:{yao:3,yingying:2,raven:2,hamel:2,nox:1,angel:1,oak:1,adela:1,dreya:1,crache:1,enfer:1,serpent:2,pearl:1,hestia:1,pylgia:1,xiaofeng:2,'000':2} } ] },
       { text: "如果获得了强大的力量，你会如何使用？", opts:[
-        { text:"用来建立新的秩序，保护想保护的人", scores:{zoya:3,rohu:3,jichuan:3,langley:2,coquelic:2,aien:3,lanjiu:-1,angel:0,pearl:-1,chelsea:1} },
-        { text:"随心所欲地生活，追求绝对的自由", scores:{yao:3,xiaofeng:3,angel:2,raven:3,nox:1,'000':2,serin:-1,langley:-1,rohu:-1,aien:-1} },
-        { text:"隐藏起来，继续过普通人的生活", scores:{angel:2,adela:2,lanjiu:1,eve:1,mantis:1,aien:0,zoya:-1,serin:0,langley:0,chelsea:-1} },
-        { text:"深入研究力量的本质，探寻真理", scores:{serin:2,dreya:3,duro:2,summer:3,aien:2,yao:0,zoya:0,xiaofeng:-1,chelsea:0,'000':3} } ] },
+        { text:"用来建立新的秩序，保护想保护的人", scores:{zoya:3,rohu:3,jichuan:3,langley:2,coquelic:2,aien:3,chelsea:1,serin:1,hamel:1,adela:1,crache:1,donald:2,vanilla:1,bianca:1,hestia:1,duro:1,yingying:1,jelena:2} },
+        { text:"随心所欲地生活，追求绝对的自由", scores:{yao:3,xiaofeng:3,angel:2,raven:3,nox:1,lanjiu:1,zoya:1,oak:1,dreya:1,deren:1,crache:2,enfer:1,serpent:1,pearl:1,pylgia:2,'000':2} },
+        { text:"隐藏起来，继续过普通人的生活", scores:{angel:2,adela:2,lanjiu:1,oak:1,hamel:1,deren:1,nox:1,crache:1,yingying:1} },
+        { text:"深入研究力量的本质，探寻真理", scores:{serin:2,dreya:3,duro:2,summer:3,aien:2,lanjiu:1,langley:2,oak:1,cabernet:1,deren:1,enfer:1,vanilla:2,bianca:1,pylgia:1,jichuan:1,yugu:2,lichen:3,'000':3} } ] },
       { text: "你更认同哪一种人与人的关系？", opts:[
-        { text:"基于共同利益和信念的牢固联盟", scores:{lanjiu:3,langley:3,serin:2,eirene:2,zoya:1,aien:2,yingying:-1,hestia:-1,jelena:0,chelsea:1} },
-        { text:"灵魂深处的共鸣，不需要太多言语", scores:{yingying:3,jichuan:3,hamel:3,hestia:2,mantis:2,aien:1,serin:0,lanjiu:-1,eirene:-1,chelsea:0} },
-        { text:"彼此独立，互相尊重对方的空间", scores:{angel:3,lanjiu:2,oak:2,adela:1,aien:2,zoya:0,rohu:-1,jelena:-1,chelsea:0,'000':2} },
-        { text:"明确的支配与服从，秩序井然", scores:{zoya:2,serin:2,eirene:3,coquelic:2,rohu:1,chelsea:2,duro:-1,yingying:-1,angel:-1,aien:-1} } ] },
+        { text:"基于共同利益和信念的牢固联盟", scores:{lanjiu:3,langley:3,serin:2,eirene:2,zoya:1,aien:2,chelsea:1,oak:1,cabernet:1,dreya:1,deren:1,summer:1,rohu:1,donald:1,pearl:1,vanilla:1,bianca:1,duro:1,jichuan:1,lichen:1,'000':1} },
+        { text:"灵魂深处的共鸣，不需要太多言语", scores:{yingying:3,jichuan:3,hamel:3,hestia:2,aien:1,angel:1,oak:1,adela:1,dreya:1,raven:1,deren:1,nox:1,crache:1,enfer:1,serpent:2,donald:1,pylgia:1,duro:2,yugu:1,lichen:1,jelena:2,yao:1} },
+        { text:"彼此独立，互相尊重对方的空间", scores:{angel:3,lanjiu:2,oak:2,adela:1,aien:2,serin:1,langley:1,dreya:2,raven:1,deren:2,nox:2,crache:2,enfer:1,summer:1,vanilla:1,bianca:1,pylgia:3,lichen:1,xiaofeng:1,'000':2} },
+        { text:"明确的支配与服从，秩序井然", scores:{zoya:2,serin:2,eirene:3,coquelic:2,rohu:1,chelsea:2,lanjiu:1,langley:1,cabernet:2,xiaofeng:1} } ] },
       { text: "你更容易被哪种类型的故事打动？", opts:[
-        { text:"东洲的志怪传说，人与妖的纠葛", scores:{duro:3,yingying:3,jichuan:3,yao:2,yugu:2,lichen:2,zoya:-1,lanjiu:-1,aien:0,chelsea:0} },
-        { text:"狄斯的黑帮史诗，权力与生存的较量", scores:{zoya:3,lanjiu:3,langley:2,angel:2,raven:2,duro:-1,jichuan:-1,yingying:-1,aien:1,chelsea:1} },
-        { text:"古典悲剧，英雄在命运前的挣扎", scores:{yugu:3,hamel:3,jichuan:2,serin:1,nox:1,aien:2,zoya:0,lanjiu:0,angel:0,chelsea:0} },
-        { text:"现代都市的悬疑与秘密", scores:{serin:2,langley:2,bianca:3,lanjiu:2,aien:1,duro:-1,yingying:-1,yao:-1,chelsea:1,'000':3} } ] },
+        { text:"东洲的志怪传说，人与妖的纠葛", scores:{duro:3,yingying:3,jichuan:3,yao:2,yugu:2,lichen:2,hamel:1,adela:1,serpent:1,hestia:1,jelena:1} },
+        { text:"狄斯的黑帮史诗，权力与生存的较量", scores:{zoya:3,lanjiu:3,langley:2,angel:2,raven:2,aien:1,chelsea:1,serin:1,oak:1,nox:1,crache:2,rohu:1,donald:2,bianca:1,xiaofeng:1} },
+        { text:"古典悲剧，英雄在命运前的挣扎", scores:{yugu:3,hamel:3,jichuan:2,serin:1,nox:1,aien:2,oak:1,cabernet:1,adela:1,dreya:1,deren:1,enfer:1,pearl:1,vanilla:1,duro:1,yingying:1} },
+        { text:"现代都市的悬疑与秘密", scores:{serin:2,langley:2,bianca:3,lanjiu:2,aien:1,chelsea:1,angel:1,oak:2,cabernet:1,dreya:1,raven:1,deren:2,crache:1,summer:1,pearl:1,vanilla:1,'000':2} } ] },
       { text: "遭遇背叛时，你的反应更接近？", opts:[
-        { text:"冷酷地清算，绝不原谅", scores:{zoya:3,rohu:2,eirene:2,coquelic:2,lanjiu:1,duro:-1,yingying:-1,jichuan:-1,aien:0,chelsea:0} },
-        { text:"虽然痛苦，但仍试图理解对方的动机", scores:{duro:3,yingying:3,jichuan:3,jelena:3,serin:0,aien:2,zoya:-1,lanjiu:-1,angel:0,chelsea:1} },
-        { text:"将计就计，反过来利用对方", scores:{lanjiu:3,serin:2,langley:3,eirene:3,pearl:2,zoya:0,duro:-1,jichuan:-1,aien:-1,chelsea:2} },
-        { text:"默默离开，从此不再信任任何人", scores:{angel:3,oak:3,adela:2,nox:2,hestia:2,aien:1,zoya:0,serin:0,donald:-1,chelsea:-1} } ] },
-      { text: "对于“牺牲”这件事，你的态度是？", opts:[
-        { text:"在必要的时候，可以牺牲自己", scores:{jichuan:3,rohu:3,zoya:2,hamel:3,coquelic:2,langley:1,aien:3,lanjiu:-1,pearl:-1,chelsea:-1} },
-        { text:"不希望任何人为此付出生命", scores:{yingying:3,duro:2,jelena:3,adela:2,hestia:2,aien:2,zoya:0,serin:0,langley:0,chelsea:1} },
-        { text:"精确计算，避免无谓的牺牲", scores:{serin:3,langley:3,lanjiu:2,eirene:2,aien:2,zoya:0,jichuan:-1,rohu:0,chelsea:1,'000':2} },
-        { text:"为了信念而死，是一种荣耀", scores:{zoya:3,yao:3,rohu:2,jichuan:2,nox:1,aien:1,duro:-1,yingying:-1,serin:-1,chelsea:0} } ] },
+        { text:"冷酷地清算，绝不原谅", scores:{zoya:3,rohu:2,eirene:2,coquelic:2,lanjiu:1,cabernet:1,xiaofeng:1} },
+        { text:"虽然痛苦，但仍试图理解对方的动机", scores:{duro:3,yingying:3,jichuan:3,jelena:3,aien:2,chelsea:1,hamel:1,adela:1,deren:1,enfer:1,serpent:1,vanilla:1,hestia:1,pylgia:1,yugu:1,lichen:1} },
+        { text:"将计就计，反过来利用对方", scores:{lanjiu:3,serin:2,langley:3,eirene:3,pearl:2,chelsea:2,oak:1,cabernet:2,dreya:1,raven:1,deren:1,summer:1,bianca:1,'000':2} },
+        { text:"默默离开，从此不再信任任何人", scores:{angel:3,oak:3,adela:2,nox:2,hestia:2,aien:1,lanjiu:1,dreya:1,raven:1,deren:1,crache:3,enfer:1,serpent:1,vanilla:1,pylgia:2,yugu:1,lichen:1} } ] },
+      { text: "对于牺牲这件事，你的态度是？", opts:[
+        { text:"在必要的时候，可以牺牲自己", scores:{jichuan:3,rohu:3,zoya:2,hamel:3,coquelic:2,langley:1,aien:3,serin:1,adela:1,nox:1,donald:1,vanilla:1,hestia:1,duro:1,yingying:1,lichen:1,jelena:1} },
+        { text:"不希望任何人为此付出生命", scores:{yingying:3,duro:2,jelena:3,adela:2,hestia:2,aien:2,chelsea:1,angel:1,hamel:1,deren:1,crache:1,enfer:1,serpent:1,bianca:1,pylgia:1,yugu:1} },
+        { text:"精确计算，避免无谓的牺牲", scores:{serin:3,langley:3,lanjiu:2,eirene:2,aien:2,chelsea:1,oak:1,cabernet:1,dreya:1,deren:1,summer:1,pearl:1,vanilla:2,bianca:1,duro:1,lichen:1,'000':2} },
+        { text:"为了信念而死，是一种荣耀", scores:{zoya:3,yao:3,rohu:2,jichuan:2,nox:1,aien:1,oak:1,hamel:1,xiaofeng:1} } ] },
       { text: "孤独对你来说意味着什么？", opts:[
-        { text:"习以为常，甚至有点享受", scores:{angel:3,oak:3,lanjiu:2,nox:2,aien:1,yingying:-1,hestia:-1,jelena:-1,chelsea:-1,'000':1} },
-        { text:"难以忍受，需要有人陪伴", scores:{yingying:3,hestia:3,eve:3,jelena:3,adela:2,angel:-1,oak:-1,lanjiu:-1,aien:0,chelsea:2} },
-        { text:"可以安静思考、不受打扰的时间", scores:{serin:2,vanilla:3,dreya:2,summer:2,aien:3,yingying:-1,hestia:-1,eve:-1,chelsea:0,'000':3} },
-        { text:"为了保护自己而必须付出的代价", scores:{angel:3,rohu:2,adela:2,oak:2,lanjiu:1,aien:0,duro:-1,jichuan:-1,donald:-1,chelsea:-1} } ] },
-      { text: "你如何看待“命运”这件事？", opts:[
-        { text:"命运由自己掌握，不信天命", scores:{zoya:3,eirene:2,rohu:2,coquelic:2,xiaofeng:3,serin:-1,yugu:-1,duro:0,aien:1,chelsea:2} },
-        { text:"很多事情冥冥中自有定数", scores:{serin:3,yingying:3,jichuan:2,yugu:3,oak:2,aien:0,zoya:-1,eirene:-1,xiaofeng:-1,chelsea:0} },
-        { text:"命运是可以被计算和预测的轨迹", scores:{serin:2,langley:2,vanilla:2,dreya:2,aien:1,yao:-1,raven:-1,hamel:0,chelsea:0,'000':3} },
-        { text:"命运是虚无的，没什么意义", scores:{nox:3,angel:2,oak:2,raven:2,'000':2,serin:-1,yingying:-1,jichuan:-1,duro:-1,aien:-1} } ] },
+        { text:"习以为常，甚至有点享受", scores:{angel:3,oak:3,lanjiu:2,nox:2,aien:1,serin:1,dreya:2,raven:1,deren:1,crache:3,enfer:1,summer:1,vanilla:1,pylgia:3,yugu:1,lichen:1,xiaofeng:1,'000':1} },
+        { text:"难以忍受，需要有人陪伴", scores:{yingying:3,hestia:3,jelena:3,adela:2,chelsea:2,hamel:1,serpent:3,donald:1,pearl:1,bianca:1,duro:1,jichuan:1} },
+        { text:"可以安静思考、不受打扰的时间", scores:{serin:2,vanilla:3,dreya:2,summer:2,aien:3,lanjiu:1,langley:1,oak:1,cabernet:1,deren:2,enfer:1,bianca:1,pylgia:1,duro:1,jichuan:1,yugu:2,lichen:2,yao:1,'000':2} },
+        { text:"为了保护自己而必须付出的代价", scores:{angel:3,rohu:2,adela:2,oak:2,lanjiu:1,raven:1,nox:1,crache:1,pylgia:1,xiaofeng:1,'000':1} } ] },
+      { text: "你如何看待命运这件事？", opts:[
+        { text:"命运由自己掌握，不信天命", scores:{zoya:3,eirene:2,rohu:2,coquelic:2,xiaofeng:3,aien:1,chelsea:2,angel:1,raven:1,deren:1,summer:1,donald:2,pearl:1,bianca:1,yao:1} },
+        { text:"很多事情冥冥中自有定数", scores:{serin:3,yingying:3,jichuan:2,yugu:3,oak:2,lanjiu:1,hamel:1,cabernet:1,adela:1,dreya:1,nox:1,enfer:1,serpent:1,vanilla:1,hestia:1,pylgia:1,duro:1,lichen:1,jelena:1,yao:1,'000':1} },
+        { text:"命运是可以被计算和预测的轨迹", scores:{serin:2,langley:2,vanilla:2,dreya:2,aien:1,lanjiu:1,oak:1,deren:1,summer:2,bianca:1,duro:1,jichuan:1,yugu:1,lichen:2,'000':3} },
+        { text:"命运是虚无的，没什么意义", scores:{nox:3,angel:2,oak:2,raven:2,crache:1,pylgia:1,yao:1,'000':1} } ] },
       { text: "你的弱点更接近哪一种？", opts:[
-        { text:"控制欲太强，不放心交给别人", scores:{serin:3,langley:3,eirene:3,zoya:2,coquelic:2,duro:-1,yingying:-1,raven:-1,aien:0,chelsea:1} },
-        { text:"情感上依赖他人，害怕被抛弃", scores:{yingying:3,hestia:3,eve:3,hamel:2,jelena:3,serin:0,langley:-1,zoya:0,aien:1,chelsea:0} },
-        { text:"过于理性，显得冷漠疏远", scores:{angel:2,lanjiu:2,oak:2,dreya:2,aien:3,yingying:-1,hestia:-1,jelena:-1,chelsea:-1,'000':2} },
-        { text:"冲动，做事不太考虑后果", scores:{yao:3,xiaofeng:3,raven:2,zoya:1,rohu:0,serin:-1,langley:-1,aien:-2,chelsea:0,'000':1} } ] },
+        { text:"控制欲太强，不放心交给别人", scores:{serin:3,langley:3,eirene:3,zoya:2,coquelic:2,chelsea:1,lanjiu:1,cabernet:1,rohu:1,pearl:1} },
+        { text:"情感上依赖他人，害怕被抛弃", scores:{yingying:3,hestia:3,hamel:2,jelena:3,aien:1,adela:2,enfer:1,serpent:2,donald:1,jichuan:1} },
+        { text:"过于理性，显得冷漠疏远", scores:{angel:2,lanjiu:2,oak:2,dreya:2,aien:3,serin:2,langley:2,deren:1,crache:1,enfer:1,summer:1,vanilla:2,bianca:1,pylgia:1,duro:1,yugu:1,lichen:1,'000':2} },
+        { text:"冲动，做事不太考虑后果", scores:{yao:3,xiaofeng:3,raven:2,zoya:1,nox:1,crache:1,serpent:1,pylgia:1,'000':1} } ] },
       { text: "你对他人的期望是？", opts:[
-        { text:"忠诚可靠，能力要强", scores:{langley:3,rohu:3,zoya:2,eirene:2,serin:1,aien:2,raven:-1,yingying:-1,adela:-1,chelsea:1} },
-        { text:"真诚温暖，能互相支持", scores:{yingying:3,jichuan:3,jelena:3,donald:3,duro:2,aien:2,serin:0,langley:0,lanjiu:-1,chelsea:2} },
-        { text:"各司其职，有用就行", scores:{lanjiu:3,eirene:2,serin:1,angel:1,aien:1,zoya:0,yingying:-1,jichuan:-1,chelsea:0,'000':2} },
-        { text:"不要来干涉我的生活", scores:{angel:3,xiaofeng:3,oak:2,nox:2,raven:2,rohu:-1,jelena:-1,donald:-1,aien:-1,chelsea:-2} } ] },
+        { text:"忠诚可靠，能力要强", scores:{langley:3,rohu:3,zoya:2,eirene:2,serin:1,aien:2,chelsea:1,lanjiu:1,cabernet:1,summer:1,donald:1,vanilla:1,bianca:1,jichuan:1,lichen:1} },
+        { text:"真诚温暖，能互相支持", scores:{yingying:3,jichuan:3,jelena:3,donald:3,duro:2,aien:2,chelsea:2,hamel:2,adela:2,raven:1,deren:1,enfer:1,serpent:2,pearl:1,bianca:2,hestia:2,yugu:1} },
+        { text:"各司其职，有用就行", scores:{lanjiu:3,eirene:2,serin:1,angel:1,aien:1,langley:1,oak:1,cabernet:1,dreya:1,summer:1,pearl:1,vanilla:1,lichen:1,xiaofeng:1,'000':2} },
+        { text:"不要来干涉我的生活", scores:{angel:3,xiaofeng:3,oak:2,nox:2,raven:2,lanjiu:1,dreya:1,deren:1,crache:3,enfer:1,serpent:1,vanilla:1,pylgia:2,yao:1,'000':1} } ] },
       { text: "面对未知的领域，你会？", opts:[
-        { text:"感到兴奋，想要一探究竟", scores:{dreya:3,summer:3,duro:2,yao:2,aien:1,serin:0,langley:0,vanilla:0,chelsea:1,'000':3} },
-        { text:"小心收集信息，一步一步来", scores:{lanjiu:3,serin:2,langley:3,vanilla:2,aien:3,dreya:0,yao:-1,xiaofeng:-1,chelsea:1,'000':1} },
-        { text:"有些害怕，尽量避开", scores:{eve:3,adela:2,hestia:2,mantis:1,aien:0,serin:0,zoya:-1,rohu:-1,donald:-1,chelsea:-1} },
-        { text:"想办法把它纳入自己的掌控", scores:{eirene:3,serin:2,langley:2,zoya:2,coquelic:2,dreya:-1,duro:-1,yingying:-1,aien:1,chelsea:2} } ] },
+        { text:"感到兴奋，想要一探究竟", scores:{dreya:3,summer:3,duro:2,yao:2,aien:1,chelsea:1,hamel:1,raven:1,deren:1,enfer:1,bianca:3,pylgia:1,yingying:1,yugu:1,lichen:2,'000':2} },
+        { text:"小心收集信息，一步一步来", scores:{lanjiu:3,serin:2,langley:3,vanilla:2,aien:3,chelsea:1,angel:1,oak:2,cabernet:1,adela:1,deren:1,crache:1,summer:1,rohu:1,bianca:1,pylgia:1,duro:1,jichuan:1,yugu:1,lichen:1,jelena:1,'000':2} },
+        { text:"有些害怕，尽量避开", scores:{adela:2,hestia:2,serpent:1} },
+        { text:"想办法把它纳入自己的掌控", scores:{eirene:3,serin:2,langley:2,zoya:2,coquelic:2,aien:1,chelsea:2,lanjiu:1,cabernet:1,rohu:1,'000':2} } ] },
       { text: "你理解的爱更接近？", opts:[
-        { text:"占有与守护，不容他人染指", scores:{serin:3,zoya:2,rohu:2,coquelic:2,duro:-1,yingying:-1,jichuan:-1,aien:0,chelsea:1,'000':3} },
-        { text:"理解与奉献，心甘情愿地付出", scores:{yingying:3,jichuan:3,hamel:3,jelena:3,hestia:2,aien:3,serin:0,langley:0,eirene:-1,chelsea:1} },
-        { text:"一种契约，双方各取所需", scores:{lanjiu:3,eirene:3,pearl:2,serin:1,angel:1,chelsea:3,yingying:-1,jichuan:-1,hamel:-1,aien:-1} },
-        { text:"一个弱点，不想轻易触碰", scores:{angel:3,oak:3,nox:2,rohu:1,adela:1,aien:0,serin:0,langley:0,duro:-1,chelsea:-1} } ] },
+        { text:"占有与守护，不容他人染指", scores:{serin:3,zoya:2,rohu:2,coquelic:2,chelsea:1,langley:1,cabernet:2,nox:1,enfer:1,serpent:1,xiaofeng:1,'000':3} },
+        { text:"理解与奉献，心甘情愿地付出", scores:{yingying:3,jichuan:3,hamel:3,jelena:3,hestia:2,aien:3,chelsea:1,angel:1,oak:1,adela:2,dreya:1,raven:1,deren:1,nox:1,crache:1,enfer:1,serpent:2,donald:2,vanilla:1,bianca:1,pylgia:1,duro:2,yugu:1,lichen:1} },
+        { text:"一种契约，双方各取所需", scores:{lanjiu:3,eirene:3,pearl:2,serin:1,angel:1,chelsea:3,langley:1,oak:1,cabernet:1,'000':2} },
+        { text:"一个弱点，不想轻易触碰", scores:{angel:3,oak:3,nox:2,rohu:1,adela:1,dreya:1,raven:1,deren:1,crache:2,pylgia:2} } ] },
       { text: "危机之中，你的第一反应是？", opts:[
-        { text:"立刻掌控全局，指挥大家行动", scores:{zoya:3,langley:3,serin:2,eirene:2,rohu:2,angel:-1,oak:-1,raven:-1,aien:2,chelsea:1} },
-        { text:"先保护身边重要的人", scores:{jichuan:3,rohu:3,coquelic:3,hestia:2,jelena:3,aien:3,zoya:0,serin:0,langley:0,chelsea:2} },
-        { text:"冷静分析，找出最优的解决方案", scores:{serin:3,langley:2,lanjiu:2,vanilla:2,aien:3,zoya:-1,rohu:0,xiaofeng:-1,chelsea:0,'000':3} },
-        { text:"直接冲上去，用力量解决问题", scores:{zoya:3,yao:3,xiaofeng:3,rohu:1,nox:1,serin:-1,langley:-1,aien:-1,chelsea:0,'000':0} } ] },
+        { text:"立刻掌控全局，指挥大家行动", scores:{zoya:3,langley:3,serin:2,eirene:2,rohu:2,aien:2,chelsea:1,lanjiu:1,cabernet:1,pearl:1,bianca:1,jichuan:1,'000':1} },
+        { text:"先保护身边重要的人", scores:{jichuan:3,rohu:3,coquelic:3,hestia:2,jelena:3,aien:3,chelsea:2,angel:1,oak:1,hamel:1,adela:1,nox:1,crache:2,enfer:1,serpent:1,donald:2,vanilla:1,duro:1,yingying:2} },
+        { text:"冷静分析，找出最优的解决方案", scores:{serin:3,langley:2,lanjiu:2,vanilla:2,aien:3,oak:1,cabernet:1,dreya:2,deren:1,summer:2,bianca:2,duro:1,jichuan:1,yugu:1,lichen:2,'000':3} },
+        { text:"直接冲上去，用力量解决问题", scores:{zoya:3,yao:3,xiaofeng:3,rohu:1,nox:1,angel:1,raven:1,pylgia:1} } ] },
       { text: "你更偏爱哪种生活环境？", opts:[
-        { text:"东洲的山水庭院，宁静致远", scores:{duro:3,jichuan:3,yingying:3,yugu:3,lichen:3,jelena:2,yao:2,zoya:-1,lanjiu:-1,aien:0,chelsea:0} },
-        { text:"狄斯的高楼霓虹，繁华高效", scores:{zoya:3,lanjiu:3,langley:3,serin:2,eirene:2,chelsea:3,duro:-1,jichuan:-1,aien:1,'000':2} },
-        { text:"远离人烟的荒野或废墟", scores:{angel:3,nox:3,oak:3,mantis:3,xiaofeng:2,serin:0,langley:-1,donald:-1,aien:1,chelsea:-2} },
-        { text:"充满艺术气息的街区", scores:{hamel:3,pearl:3,coquelic:3,enfer:3,adela:2,chelsea:2,serin:1,lanjiu:0,zoya:0,aien:0} } ] },
-      { text: "你对“过去”的态度是？", opts:[
-        { text:"过去塑造了现在的我，不会刻意回避", scores:{serin:2,langley:2,aien:3,jichuan:2,duro:2,angel:0,zoya:1,chelsea:1,'000':1} },
-        { text:"过去已经过去，重要的是向前看", scores:{zoya:3,donald:3,raven:2,yao:2,chelsea:2,serin:0,oak:-1,angel:1,aien:0,'000':2} },
-        { text:"被困在过去里，难以走出来", scores:{hamel:3,adela:3,eve:3,hestia:3,nox:2,aien:-1,zoya:-1,chelsea:-1,'000':-1} },
-        { text:"过去是可以被修改和利用的", scores:{lanjiu:3,serin:2,eirene:2,pearl:2,aien:-2,duro:-1,jichuan:-1,chelsea:1,'000':3} } ] },
-      { text: "你对“未来”的期待是？", opts:[
-        { text:"充满希望，相信会越来越好", scores:{donald:3,duro:2,jichuan:2,chelsea:3,serin:0,lanjiu:-1,angel:0,aien:1,'000':1} },
-        { text:"悲观预期，做好最坏的打算", scores:{lanjiu:3,serin:2,oak:2,vanilla:2,aien:1,zoya:0,chelsea:-1,donald:-1,'000':0} },
-        { text:"不去想未来，活在当下", scores:{angel:3,yao:2,xiaofeng:2,pearl:3,raven:2,serin:0,langley:0,aien:0,chelsea:1,'000':2} },
-        { text:"未来已经被写好，我只是在走向它", scores:{serin:3,yugu:3,nox:2,aien:-1,zoya:-1,duro:-1,chelsea:-1,'000':3} } ] },
-      { text: "如果让你选择一种颜色代表自己，会是？", opts:[
-        { text:"黑色，深沉而神秘", scores:{angel:3,oak:3,nox:3,serin:2,langley:2,aien:1,chelsea:0,duro:-1,yingying:-1,'000':1} },
-        { text:"红色，热烈而危险", scores:{zoya:3,coquelic:3,cabernet:3,yao:2,rohu:2,serin:0,aien:0,chelsea:1,'000':1} },
-        { text:"金色，华丽而耀眼", scores:{chelsea:3,pearl:3,eirene:3,hamel:2,serin:1,aien:-1,angel:-1,'000':0} },
-        { text:"紫色，神秘而优雅", scores:{serin:3,yingying:3,duro:2,yugu:2,lichen:2,aien:0,zoya:0,chelsea:2,'000':2} } ] },
+        { text:"东洲的山水庭院，宁静致远", scores:{duro:3,jichuan:3,yingying:3,yugu:3,lichen:3,jelena:2,yao:2,serin:1,hamel:1,adela:1,serpent:1,hestia:1} },
+        { text:"狄斯的高楼霓虹，繁华高效", scores:{zoya:3,lanjiu:3,langley:3,serin:2,eirene:2,chelsea:3,aien:1,angel:1,dreya:1,raven:1,deren:1,summer:1,rohu:1,donald:1,pearl:1,vanilla:1,bianca:2,'000':3} },
+        { text:"远离人烟的荒野或废墟", scores:{angel:3,nox:3,oak:3,xiaofeng:2,aien:1,lanjiu:1,dreya:2,raven:1,crache:3,enfer:1,vanilla:1,pylgia:3,lichen:1,yao:1,'000':1} },
+        { text:"充满艺术气息的街区", scores:{hamel:3,pearl:3,coquelic:3,enfer:3,adela:2,chelsea:2,serin:1,cabernet:3,raven:1,deren:2,serpent:1,summer:1,bianca:1,duro:1,yingying:1,yugu:1,jelena:1,'000':1} } ] },
+      { text: "你对童年的记忆更接近？", opts:[
+        { text:"童年是温暖的，有值得怀念的人和事", scores:{duro:2,jelena:2,chelsea:2,hamel:1,adela:1,donald:2,hestia:1,jichuan:2,yingying:2} },
+        { text:"童年是模糊的，记不清也不想记起", scores:{angel:2,oak:2,nox:2,adela:2,dreya:1,raven:1,deren:1,vanilla:1} },
+        { text:"童年并不美好，但让我变得坚强", scores:{zoya:2,lanjiu:2,serin:1,langley:1,aien:2,crache:2,enfer:2,serpent:1,rohu:1,donald:2,pylgia:1,lichen:1} },
+        { text:"我没有真正意义上的童年，很早就开始独自面对世界", scores:{crache:3,angel:2,oak:2,nox:1,raven:2,hestia:3,pylgia:2,xiaofeng:2,'000':1} } ] },
+      { text: "当看到街边有孩子被欺负时，你会？", opts:[
+        { text:"立刻上前制止，保护那个孩子", scores:{zoya:3,rohu:2,jichuan:3,donald:3,aien:2,coquelic:1,hamel:1,adela:1,hestia:2,duro:1,yingying:2,jelena:3} },
+        { text:"观察一下情况再决定是否介入", scores:{lanjiu:3,serin:2,langley:2,angel:1,cabernet:1,dreya:1,raven:1,deren:1,vanilla:1,bianca:2,lichen:1,'000':1} },
+        { text:"心里不舒服，但觉得这不关我的事", scores:{angel:2,oak:2,nox:2,enfer:1,xiaofeng:1} },
+        { text:"暗中帮助那个孩子，但不让对方知道", scores:{crache:3,serin:2,langley:1,angel:2,oak:2,raven:2,nox:1,deren:1,pylgia:1,'000':2} } ] },
+      { text: "如果让你选择一种元素代表自己，会是？", opts:[
+        { text:"暗影，隐匿而致命", scores:{angel:3,oak:3,nox:2,serin:2,langley:2,lanjiu:1,dreya:1,raven:1,deren:1,crache:3,enfer:1,pylgia:1,'000':2} },
+        { text:"火焰，炽热而危险", scores:{zoya:3,yao:3,xiaofeng:2,rohu:2,raven:2,coquelic:1,cabernet:1,pearl:1,hestia:1} },
+        { text:"流水，柔韧而深远", scores:{duro:3,yingying:2,jelena:2,hamel:2,adela:1,serin:1,serpent:1,vanilla:1,hestia:1,pylgia:1,jichuan:1,yugu:1,lichen:1} },
+        { text:"钢铁，冷硬而坚固", scores:{vanilla:3,rohu:2,aien:2,langley:2,serin:1,zoya:1,lanjiu:1,oak:1,dreya:1,nox:1,summer:2,jichuan:1,lichen:1,'000':2} },
+        { text:"花卉，美丽而短暂", scores:{coquelic:3,hamel:2,cabernet:2,chelsea:2,yingying:2,adela:1,deren:1,enfer:2,serpent:1,pearl:2,jelena:1} },
+        { text:"星月，神秘而永恒", scores:{serin:3,yugu:3,duro:2,lichen:2,yao:2,nox:1,langley:1,oak:1,hamel:1,dreya:3,deren:1,summer:1,vanilla:2,yingying:1,jichuan:1,'000':3} } ] },
       { text: "你更欣赏哪种类型的领导者？", opts:[
-        { text:"身先士卒，冲锋在前", scores:{zoya:3,rohu:3,jichuan:2,xiaofeng:2,serin:-1,langley:0,eirene:-1,aien:1,chelsea:0} },
-        { text:"运筹帷幄，决胜千里", scores:{langley:3,eirene:3,serin:2,lanjiu:2,aien:1,zoya:0,angel:-1,chelsea:1,'000':2} },
-        { text:"以德服人，仁者无敌", scores:{duro:3,jichuan:3,yingying:2,jelena:3,aien:2,zoya:0,langley:-1,eirene:-1,chelsea:1} },
-        { text:"无为而治，让大家自由发挥", scores:{angel:2,donald:2,pearl:2,raven:2,aien:0,serin:-1,langley:-1,chelsea:1,'000':1} } ] },
-      { text: "你对于“名声”的看法是？", opts:[
-        { text:"名声很重要，是地位的象征", scores:{chelsea:3,eirene:3,pearl:2,coquelic:2,serin:1,aien:-1,angel:-1,oak:-1,'000':0} },
-        { text:"名声是负累，宁愿隐于幕后", scores:{langley:3,serin:2,lanjiu:2,angel:2,aien:2,zoya:0,chelsea:-1,'000':1} },
-        { text:"不在乎别人怎么看我", scores:{zoya:3,oak:3,nox:3,raven:3,xiaofeng:2,serin:0,aien:2,chelsea:0,'000':2} },
-        { text:"名声是工具，可以用来达成目的", scores:{lanjiu:3,eirene:3,serin:2,pearl:2,aien:1,duro:-1,yingying:-1,chelsea:2,'000':2} } ] },
-      { text: "你对于“美”的理解更接近？", opts:[
-        { text:"美是和谐与秩序", scores:{serin:3,langley:2,vanilla:2,duro:2,aien:2,yao:-1,xiaofeng:-1,chelsea:1,'000':1} },
-        { text:"美是打破常规的震撼", scores:{hamel:3,enfer:3,yugu:3,raven:2,serin:0,aien:-1,chelsea:0,'000':2} },
-        { text:"美是华丽与繁复", scores:{pearl:3,coquelic:3,cabernet:3,chelsea:3,yingying:1,aien:-1,'000':0} },
-        { text:"美是自然与本真", scores:{duro:3,jichuan:3,yingying:3,xiaofeng:2,nox:1,aien:1,chelsea:0,'000':0} } ] },
+        { text:"身先士卒，冲锋在前", scores:{zoya:3,rohu:3,jichuan:2,xiaofeng:2,aien:1,angel:1,nox:1,donald:1,yao:1} },
+        { text:"运筹帷幄，决胜千里", scores:{langley:3,eirene:3,serin:2,lanjiu:2,aien:1,chelsea:1,oak:1,cabernet:1,dreya:1,deren:1,summer:1,pearl:1,vanilla:1,bianca:1,yugu:1,lichen:1,'000':3} },
+        { text:"以德服人，仁者无敌", scores:{duro:3,jichuan:3,yingying:2,jelena:3,aien:2,chelsea:1,serin:1,hamel:2,adela:1,serpent:1,donald:2,vanilla:1,bianca:1,hestia:1,yugu:1} },
+        { text:"无为而治，让大家自由发挥", scores:{angel:2,donald:2,pearl:2,raven:2,chelsea:1,oak:1,adela:1,deren:1,nox:1,crache:2,enfer:1,serpent:1,summer:1,pylgia:1,xiaofeng:1,'000':2} } ] },
+      { text: "你对于错误的态度是？", opts:[
+        { text:"错误必须被纠正，付出代价也在所不惜", scores:{aien:3,serin:2,langley:2,rohu:1,zoya:1,vanilla:1,bianca:1,lichen:1} },
+        { text:"错误是学习的机会，不必过度苛责", scores:{duro:3,donald:3,jelena:2,adela:1,chelsea:1,hamel:1,raven:1,deren:1,enfer:1,serpent:1,summer:1,hestia:1,pylgia:1,yingying:2,jichuan:1,'000':1} },
+        { text:"错误可以被利用，转化为自己的优势", scores:{lanjiu:3,eirene:3,pearl:2,serin:1,chelsea:2,langley:1,oak:1,cabernet:1,deren:1,summer:1,bianca:1,'000':3} },
+        { text:"尽量避免犯错，但犯了也不会纠结", scores:{angel:3,oak:2,adela:2,serin:1,aien:1,lanjiu:1,dreya:1,deren:1,nox:1,crache:1,serpent:1,vanilla:1,pylgia:1,yao:1,xiaofeng:1,'000':1} } ] },
       { text: "最后，你对自己的人生有什么样的期许？", opts:[
-        { text:"建功立业，留下属于自己的印记", scores:{zoya:3,langley:3,eirene:3,chelsea:2,rohu:2,serin:1,aien:1,'000':1} },
-        { text:"守护珍视的人，平凡而温暖地度过一生", scores:{jichuan:3,jelena:3,adela:3,hestia:2,aien:3,zoya:0,serin:0,chelsea:1,'000':0} },
-        { text:"看遍世间风景，体验一切可能", scores:{duro:3,yao:3,pearl:3,raven:2,xiaofeng:2,serin:0,langley:0,aien:0,chelsea:2,'000':2} },
-        { text:"找到那个让我不再孤独的人或事", scores:{angel:3,yingying:3,hamel:3,nox:3,hestia:3,serin:2,aien:2,chelsea:1,'000':2} } ] }
+        { text:"建功立业，留下属于自己的印记", scores:{zoya:3,langley:3,eirene:3,chelsea:2,rohu:2,serin:1,aien:1,lanjiu:1,cabernet:1,dreya:1,deren:1,summer:1,donald:1,pearl:1,bianca:1,jichuan:1,lichen:1,xiaofeng:1,'000':1} },
+        { text:"守护珍视的人，平凡而温暖地度过一生", scores:{jichuan:3,jelena:3,adela:3,hestia:2,aien:3,chelsea:1,angel:1,hamel:2,nox:1,crache:1,enfer:1,serpent:2,rohu:1,donald:2,vanilla:1,pylgia:1,duro:1,yingying:3} },
+        { text:"看遍世间风景，体验一切可能", scores:{duro:3,yao:3,pearl:3,raven:2,xiaofeng:2,chelsea:2,lanjiu:1,angel:1,oak:1,hamel:1,cabernet:1,dreya:1,deren:1,enfer:1,serpent:1,summer:1,bianca:1,pylgia:1,yingying:1,yugu:1,lichen:2,'000':2} },
+        { text:"找到那个让我不再孤独的人或事", scores:{angel:3,yingying:3,hamel:3,nox:3,hestia:3,serin:2,aien:2,chelsea:1,oak:2,adela:2,dreya:2,raven:1,deren:1,crache:2,enfer:2,serpent:2,summer:1,donald:1,vanilla:1,pylgia:2,duro:1,jichuan:1,yugu:1,lichen:1,jelena:1,yao:1,'000':2} } ] }
     ];
 
-    let idx=0; const total=questions.length; let ans=new Array(total).fill(null);
-    const splash=document.getElementById('splashScreen'), quiz=document.getElementById('quizSection'), res=document.getElementById('resultSection');
-    const qDisp=document.getElementById('questionDisplay'), optDiv=document.getElementById('optionsContainer');
-    const prev=document.getElementById('prevBtn'), next=document.getElementById('nextBtn');
-    const counter=document.getElementById('counterText'), prog=document.getElementById('progressFill');
-    const start=document.getElementById('startTestBtn'), restart=document.getElementById('restartBtn');
-    const cName=document.getElementById('charName'), cTitle=document.getElementById('charTitle'), cTags=document.getElementById('traitTags');
-    const cQuote=document.getElementById('charQuote'), deep=document.getElementById('deepAnalysis'), rev=document.getElementById('revelation');
+    var idx=0; var total=questions.length; var ans=new Array(total).fill(null);
+    var splash=document.getElementById('splashScreen'), quiz=document.getElementById('quizSection'), res=document.getElementById('resultSection');
+    var qDisp=document.getElementById('questionDisplay'), optDiv=document.getElementById('optionsContainer');
+    var prev=document.getElementById('prevBtn'), next=document.getElementById('nextBtn');
+    var counter=document.getElementById('counterText'), prog=document.getElementById('progressFill');
+    var start=document.getElementById('startTestBtn'), restart=document.getElementById('restartBtn');
+    var cName=document.getElementById('charName'), cTitle=document.getElementById('charTitle'), cTags=document.getElementById('traitTags');
+    var cQuote=document.getElementById('charQuote'), deep=document.getElementById('deepAnalysis'), rev=document.getElementById('revelation');
 
-    function renderQuestion(i){
-      const q=questions[i]; qDisp.textContent=q.text;
-      let html=''; q.opts.forEach((opt,oi)=>{ const sel=ans[i]===oi; html+=`<button class="option-btn" data-opt="${oi}" style="${sel?'background:#4a2020;border-color:#d07070;':''}">${opt.text}</button>`; });
-      optDiv.innerHTML=html;
-      optDiv.querySelectorAll('.option-btn').forEach(b=>b.addEventListener('click',e=>{
-        const oi=parseInt(b.dataset.opt); ans[i]=oi;
-        optDiv.querySelectorAll('.option-btn').forEach((bt,ix)=>{ bt.style.background=ix===oi?'#4a2020':'#1c0e0ee0'; bt.style.borderColor=ix===oi?'#d07070':'#a85050'; });
+    function renderQuestion(i) {
+      var q = questions[i]; qDisp.textContent = q.text;
+      var html = ''; q.opts.forEach(function(opt, oi) { var sel = ans[i] === oi; html += '<button class="option-btn" data-opt="' + oi + '" style="' + (sel ? 'background:#4a2020;border-color:#d07070;' : '') + '">' + opt.text + '</button>'; });
+      optDiv.innerHTML = html;
+      optDiv.querySelectorAll('.option-btn').forEach(function(b) { b.addEventListener('click', function(e) {
+        var oi = parseInt(b.dataset.opt); ans[i] = oi;
+        optDiv.querySelectorAll('.option-btn').forEach(function(bt, ix) { bt.style.background = ix === oi ? '#4a2020' : '#1c0e0ee0'; bt.style.borderColor = ix === oi ? '#d07070' : '#a85050'; });
         updateNav(i);
-      }));
+      }); });
       updateNav(i);
     }
-    function updateNav(i){ counter.textContent=`${i+1} / ${total}`; prog.style.width=`${(i+1)/total*100}%`; prev.disabled=i===0; next.textContent=i===total-1?'🔮 揭示烙印':'下一题 →'; }
-    
-    function calcScores(){
-      let scores={}; characters.forEach(c=>scores[c.id]=0);
-      ans.forEach((a,i)=>{ if(a!==null){ const sc=questions[i].opts[a].scores; Object.keys(sc).forEach(id=>{ scores[id]=(scores[id]||0)+sc[id]; }); } });
+
+    function updateNav(i) { counter.textContent = (i + 1) + ' / ' + total; prog.style.width = ((i + 1) / total * 100) + '%'; prev.disabled = i === 0; next.textContent = i === total - 1 ? '🔮 揭示烙印' : '下一题 →'; }
+
+    function calcScores() {
+      var scores = {}; characters.forEach(function(c) { scores[c.id] = 0; });
+      ans.forEach(function(a, i) { if (a !== null) { var sc = questions[i].opts[a].scores; Object.keys(sc).forEach(function(id) { scores[id] = (scores[id] || 0) + sc[id]; }); } });
       return scores;
     }
-    
-    function showResult(){
-      const scores=calcScores(); let bestChar=characters[0], maxScore=-999;
-      characters.forEach(c=>{ if(scores[c.id]>maxScore){ maxScore=scores[c.id]; bestChar=c; } });
-      cName.textContent=bestChar.name; cTitle.textContent=bestChar.title; cQuote.textContent=bestChar.quote;
-      deep.textContent=bestChar.analysis; rev.textContent=bestChar.revelation;
-      cTags.innerHTML=''; bestChar.tags.forEach(t=>{ const s=document.createElement('span'); s.className='tag'; s.textContent=t; cTags.appendChild(s); });
+
+    function showResult() {
+      var scores = calcScores(); var bestChar = characters[0], maxScore = -999;
+      characters.forEach(function(c) { if (scores[c.id] > maxScore) { maxScore = scores[c.id]; bestChar = c; } });
+      cName.textContent = bestChar.name; cTitle.textContent = bestChar.title; cQuote.textContent = bestChar.quote;
+      deep.textContent = bestChar.analysis; rev.textContent = bestChar.revelation;
+      cTags.innerHTML = ''; bestChar.tags.forEach(function(t) { var s = document.createElement('span'); s.className = 'tag'; s.textContent = t; cTags.appendChild(s); });
       quiz.classList.add('hidden'); res.classList.remove('hidden');
     }
-    
-    start.addEventListener('click', ()=>{ splash.classList.add('hidden'); quiz.classList.remove('hidden'); renderQuestion(0); });
-    prev.addEventListener('click', ()=>{ if(idx>0){ idx--; renderQuestion(idx); } });
-    next.addEventListener('click', ()=>{
-      if(ans[idx]===null){ alert('请选择一个选项'); return; }
-      if(idx===total-1){ if(ans.includes(null)) alert('请完成所有题目'); else showResult(); }
-      else{ idx++; renderQuestion(idx); }
+
+    start.addEventListener('click', function() { splash.classList.add('hidden'); quiz.classList.remove('hidden'); renderQuestion(0); });
+    prev.addEventListener('click', function() { if (idx > 0) { idx--; renderQuestion(idx); } });
+    next.addEventListener('click', function() {
+      if (ans[idx] === null) { alert('请选择一个选项'); return; }
+      if (idx === total - 1) { if (ans.includes(null)) alert('请完成所有题目'); else showResult(); }
+      else { idx++; renderQuestion(idx); }
     });
-    restart.addEventListener('click', ()=>{ ans=new Array(total).fill(null); idx=0; res.classList.add('hidden'); splash.classList.remove('hidden'); });
+    restart.addEventListener('click', function() { ans = new Array(total).fill(null); idx = 0; res.classList.add('hidden'); splash.classList.remove('hidden'); });
   })();
 </script>
 </body>
